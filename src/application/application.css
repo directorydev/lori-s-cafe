@@ -1,0 +1,41 @@
+/* Styling the Login Button */
+.button {
+    -fx-background-color: #000000; /* Matching your logo */
+    -fx-text-fill: white;
+    -fx-background-radius: 20;
+    -fx-padding: 10 30 10 30;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+.button-outline {
+    -fx-background-color: transparent;
+    -fx-border-color: #000000;
+    -fx-border-radius: 20;
+    -fx-border-width: 2;
+    -fx-text-fill: #000000;
+    -fx-font-weight: bold;
+    -fx-padding: 10 30 10 30;
+}
+
+.button:hover {
+    -fx-background-color: #333333; /* Subtle change on hover */
+}
+
+/* Styling the Text Fields */
+.text-field, .password-field {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #DCDCDC;
+    -fx-border-radius: 15;
+    -fx-background-radius: 15;
+    -fx-padding: 8;
+}
+
+.text-field:focused, .password-field:focused {
+    -fx-border-color: #000000; /* Highlight when typing */
+}/* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
+.label {
+    -fx-font-family: "System";
+    -fx-font-weight: bold;
+    -fx-font-size: 24px;
+    -fx-text-fill: #333333;
+}
