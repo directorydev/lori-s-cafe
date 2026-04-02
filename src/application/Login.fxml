@@ -35,7 +35,7 @@
             </AnchorPane>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                <children>
-                  <VBox alignment="CENTER" blendMode="SRC_ATOP" fillWidth="false" layoutX="84.0" layoutY="20.0" spacing="20.0" style="-fx-background-color: #fafafa;;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <VBox fx:id="contentArea" alignment="CENTER" blendMode="SRC_ATOP" fillWidth="false" layoutX="84.0" layoutY="20.0" spacing="20.0" style="-fx-background-color: #fafafa;;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
                         <Label prefHeight="65.0" prefWidth="92.0" text="SIGN IN">
                            <font>
@@ -44,7 +44,7 @@
                         </Label>
                         <TextField id="usernameField" fx:id="usernameField" alignment="CENTER" maxWidth="250.0" mouseTransparent="true" prefWidth="250.0" promptText="USERNAME">
                            <effect>
-                              <InnerShadow blurType="TWO_PASS_BOX" height="11.64" radius="3.58" width="4.68" />
+                              <InnerShadow blurType="TWO_PASS_BOX" height="8.16" radius="2.71" width="4.68" />
                            </effect>
                         </TextField>
                         <PasswordField id="passwordField" fx:id="passwordField" alignment="CENTER" maxWidth="250.0" mouseTransparent="true" prefWidth="250.0" promptText="PASSWORD">
