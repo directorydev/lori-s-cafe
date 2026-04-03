@@ -1,12 +1,22 @@
 /* Styling the Login Button */
+/* 1. Force the title to be bold no matter what */
+.title-label {
+    -fx-font-size: 26px !important;
+    -fx-font-weight: bold !important;
+    -fx-text-fill: #333333 !important;
+    -fx-opacity: 1.0 !important;
+}
+
+/* 2. Fix the Button "Squish" (Reduced horizontal padding) */
 .button {
-    -fx-background-color: #000000; /* Matching your logo */
+    -fx-background-color: #000000;
     -fx-text-fill: white;
     -fx-background-radius: 20;
-    -fx-padding: 10 30 10 30;
+    -fx-padding: 8 15 8 15; /* Reduced from 30 to 15 to fit the text */
     -fx-font-weight: bold;
     -fx-cursor: hand;
 }
+
 .button-outline {
     -fx-background-color: transparent;
     -fx-border-color: #000000;
@@ -14,7 +24,7 @@
     -fx-border-width: 2;
     -fx-text-fill: #000000;
     -fx-font-weight: bold;
-    -fx-padding: 10 30 10 30;
+    -fx-padding: 8 15 8 15; /* Matches the solid button */
 }
 
 .button:hover {
@@ -33,9 +43,23 @@
 .text-field:focused, .password-field:focused {
     -fx-border-color: #000000; /* Highlight when typing */
 }/* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
+/* 1. This handles the small sub-text */
 .label {
-    -fx-font-family: "System";
-    -fx-font-weight: bold;
-    -fx-font-size: 24px;
-    -fx-text-fill: #333333;
+    -fx-font-weight: normal !important; /* Forces normal weight */
+    -fx-text-fill: #7c7c7c;
+}
+
+/* 2. This handles ONLY your Bold Titles */
+
+.sidebar-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-transition: 0.3s; /* Smooth color change */
+    -fx-cursor: hand;
+}
+
+.sidebar-button:hover {
+    -fx-background-color: #3d3d3d;
+    /* This adds a subtle "glow" effect when hovering */
+    -fx-effect: dropshadow(three-pass-box, rgba(255,255,255,0.1), 10, 0, 0, 0);
 }

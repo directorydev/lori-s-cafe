@@ -18,13 +18,13 @@
 
 <AnchorPane prefHeight="400.0" prefWidth="600.0" stylesheets="@application.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.LoginController">
    <children>
-      <SplitPane dividerPositions="0.29797979797979796" layoutX="194.0" layoutY="102.0" prefHeight="160.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <SplitPane dividerPositions="0.33" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <items>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+          <AnchorPane minWidth="200.0" prefWidth="200.0" SplitPane.resizableWithParent="false">
                <children>
-                  <VBox alignment="CENTER" layoutX="38.0" layoutY="26.0" prefHeight="200.0" prefWidth="100.0" style="-fx-background-color: #ffffff;;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <VBox alignment="CENTER" style="-fx-background-color: #ffffff;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
-                        <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fitHeight="150.0" fitWidth="180.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@Lorislogo.jpg" />
                            </image>
@@ -33,29 +33,30 @@
                   </VBox>
                </children>
             </AnchorPane>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+            
+          <AnchorPane>
                <children>
-                  <VBox fx:id="contentArea" alignment="CENTER" blendMode="SRC_ATOP" layoutX="84.0" layoutY="20.0" spacing="20.0" style="-fx-background-color: #fafafa;;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <VBox fx:id="contentArea" alignment="CENTER" spacing="20.0" style="-fx-background-color: #fafafa;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
-                        <Label prefHeight="65.0" prefWidth="92.0" text="SIGN IN">
+                        <Label text="SIGN IN">
                            <font>
-                              <Font size="26.0" />
+                              <Font name="System Bold" size="26.0" />
                            </font>
                         </Label>
-                        <TextField id="usernameField" fx:id="usernameField" alignment="CENTER" maxWidth="250.0" mouseTransparent="true" prefWidth="250.0" promptText="EMAIL">
+                        <TextField fx:id="usernameField" alignment="CENTER" maxWidth="250.0" onAction="#handleLogin" prefHeight="35.0" prefWidth="250.0" promptText="EMAIL">
                            <effect>
                               <InnerShadow blurType="TWO_PASS_BOX" height="8.16" radius="2.71" width="4.68" />
                            </effect>
                         </TextField>
-                        <PasswordField id="passwordField" fx:id="passwordField" alignment="CENTER" maxWidth="250.0" mouseTransparent="true" prefWidth="250.0" promptText="PASSWORD">
+                        <PasswordField fx:id="passwordField" alignment="CENTER" maxWidth="250.0" onAction="#handleLogin" prefHeight="35.0" prefWidth="250.0" promptText="PASSWORD">
                            <effect>
                               <InnerShadow blurType="TWO_PASS_BOX" height="11.64" radius="3.58" width="4.68" />
                            </effect>
                         </PasswordField>
-                        <HBox alignment="CENTER" prefHeight="55.0" prefWidth="250.0" spacing="15.0">
+                        <HBox alignment="CENTER" spacing="15.0">
                            <children>
-                              <Button mnemonicParsing="false" onAction="#handleLogin" prefHeight="40.0" prefWidth="120.0" text="Login" />
-                              <Button mnemonicParsing="false" onAction="#handleRegister" prefWidth="120.0" styleClass="button-outline" text="Register" />
+                              <Button defaultButton="true" mnemonicParsing="false" onAction="#handleLogin" prefHeight="40.0" prefWidth="120.0" text="Login" />
+                              <Button mnemonicParsing="false" onAction="#handleRegister" prefHeight="40.0" prefWidth="120.0" styleClass="button-outline" text="Register" />
                            </children>
                         </HBox>
                         <Hyperlink onAction="#handleForgotPassword" text="Forgot Password?" />
@@ -63,7 +64,7 @@
                      <effect>
                         <DropShadow>
                            <color>
-                              <Color red="0.2947368323802948" green="0.2084990292787552" blue="0.2084990292787552" />
+                              <Color red="0.29" green="0.21" blue="0.21" />
                            </color>
                         </DropShadow>
                      </effect>

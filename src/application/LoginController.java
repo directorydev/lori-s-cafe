@@ -36,19 +36,8 @@ public class LoginController {
     @FXML
     public void handleForgotPassword() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("ForgotPassword.fxml"));
-            Parent forgotUI = loader.load();
-            
-            contentArea.getChildren().clear();
-            contentArea.getChildren().add(forgotUI);
-            
-
-            // This line forces the loaded FXML to take up the full width of the right pane
-            if (forgotUI instanceof javafx.scene.layout.Region) {
-                ((javafx.scene.layout.Region) forgotUI).prefWidthProperty().bind(contentArea.widthProperty());
-                ((javafx.scene.layout.Region) forgotUI).prefHeightProperty().bind(contentArea.heightProperty());
-            }
-            
+            Parent forgotUI = FXMLLoader.load(getClass().getResource("ForgotPassword.fxml"));
+            fadeSwap(forgotUI); // Smooth transition!
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -57,14 +46,38 @@ public class LoginController {
     // --- LOGIN LOGIC ---
     @FXML
     public void handleLogin() {
-        System.out.println("Login check initiated...");
         String user = usernameField.getText();
         String pass = passwordField.getText();
 
         if (user.equals("admin") && pass.equals("1234")) {
-            System.out.println("Login Success! Opening Dashboard...");
-        } else {
-            System.out.println("Invalid Username or Password.");
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("AdminDashboard.fxml"));
+                Parent dashboard = loader.load();
+                
+                // 1. Get the current Stage
+                Stage stage = (Stage) usernameField.getScene().getWindow();
+                
+                // 2. Set opacity to 0 before showing
+                dashboard.setOpacity(0);
+                
+                Scene scene = new Scene(dashboard);
+                stage.setScene(scene);
+                
+                // 3. Smoothly Maximize
+                stage.setMaximized(true);
+                stage.show();
+                
+                // 4. Create the Fade-In Animation
+                javafx.animation.FadeTransition fadeIn = new javafx.animation.FadeTransition(javafx.util.Duration.millis(500), dashboard);
+                fadeIn.setFromValue(0.0);
+                fadeIn.setToValue(1.0);
+                fadeIn.play();
+                
+                System.out.println("Smooth transition to Dashboard complete.");
+                
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -72,17 +85,9 @@ public class LoginController {
     @FXML
     public void handleRegister() {
         try {
-            // Load the Register UI
             Parent registerUI = FXMLLoader.load(getClass().getResource("Register.fxml"));
-            
-            // Remove everything currently in the right-side VBox
-            contentArea.getChildren().clear();
-            
-            // Add the Register fields into that same VBox
-            contentArea.getChildren().add(registerUI);
-            
+            fadeSwap(registerUI); // Smooth transition!
         } catch (Exception e) {
-            System.out.println("Error: Could not load Register.fxml inside the pane.");
             e.printStackTrace();
         }
     }
@@ -123,5 +128,31 @@ public class LoginController {
             System.out.println("Error returning to Login screen.");
             e.printStackTrace();
         }
+    }
+    private void fadeSwap(Parent newUI) {
+        // 1. Fade Out current content
+        javafx.animation.FadeTransition fadeOut = new javafx.animation.FadeTransition(javafx.util.Duration.millis(200), contentArea);
+        fadeOut.setFromValue(1.0);
+        fadeOut.setToValue(0.0);
+        
+        fadeOut.setOnFinished(e -> {
+            // 2. Swap the content once it's invisible
+            contentArea.getChildren().clear();
+            contentArea.getChildren().add(newUI);
+            
+            // Ensure the new UI fills the area (The "Squish" Fix)
+            if (newUI instanceof javafx.scene.layout.Region) {
+                ((javafx.scene.layout.Region) newUI).prefWidthProperty().bind(contentArea.widthProperty());
+                ((javafx.scene.layout.Region) newUI).prefHeightProperty().bind(contentArea.heightProperty());
+            }
+
+            // 3. Fade In the new content
+            javafx.animation.FadeTransition fadeIn = new javafx.animation.FadeTransition(javafx.util.Duration.millis(200), contentArea);
+            fadeIn.setFromValue(0.0);
+            fadeIn.setToValue(1.0);
+            fadeIn.play();
+        });
+        
+        fadeOut.play();
     }
 }
