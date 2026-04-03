@@ -21,6 +21,38 @@ public class LoginController {
     @FXML private TextField regUsernameField; 
     @FXML private PasswordField regPasswordField;
     @FXML private PasswordField confirmPasswordField;
+    @FXML private TextField emailResetField;
+
+    @FXML
+    public void handleResetSubmit() {
+        String email = emailResetField.getText();
+        if (email.isEmpty()) {
+            System.out.println("Error: Please enter your email.");
+        } else {
+            System.out.println("Success: Reset link sent to " + email);
+            // You could also call handleCancel(null) here to go back to login automatically
+        }
+    }
+    @FXML
+    public void handleForgotPassword() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("ForgotPassword.fxml"));
+            Parent forgotUI = loader.load();
+            
+            contentArea.getChildren().clear();
+            contentArea.getChildren().add(forgotUI);
+            
+
+            // This line forces the loaded FXML to take up the full width of the right pane
+            if (forgotUI instanceof javafx.scene.layout.Region) {
+                ((javafx.scene.layout.Region) forgotUI).prefWidthProperty().bind(contentArea.widthProperty());
+                ((javafx.scene.layout.Region) forgotUI).prefHeightProperty().bind(contentArea.heightProperty());
+            }
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     // --- LOGIN LOGIC ---
     @FXML
