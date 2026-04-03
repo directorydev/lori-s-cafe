@@ -63,3 +63,96 @@
     /* This adds a subtle "glow" effect when hovering */
     -fx-effect: dropshadow(three-pass-box, rgba(255,255,255,0.1), 10, 0, 0, 0);
 }
+
+/* Remove the ugly default TableView borders */
+.table-view {
+    -fx-background-color: transparent;
+    -fx-border-color: #DCDCDC;
+    -fx-border-width: 0 0 1 0; /* Only a bottom border */
+}
+
+/* Style the Header (The top bar of the table) */
+.table-view .column-header-background {
+    -fx-background-color: #f8f9fa;
+}
+
+.table-view .column-header {
+    -fx-background-color: transparent;
+    -fx-padding: 10;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: #333333;
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+}
+
+/* Zebra Stripes for Rows */
+.table-row-cell:odd {
+    -fx-background-color: #ffffff;
+}
+
+.table-row-cell:even {
+    -fx-background-color: #fafafa;
+}
+
+/* Highlight the row when selected */
+.table-row-cell:selected {
+    -fx-background-color: #f0f0f0;
+    -fx-text-background-color: black;
+}
+.add-item-panel {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 15;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 15, 0, 0, 5);
+    -fx-border-color: #eeeeee;
+    -fx-border-radius: 15;
+    -fx-border-width: 1;
+}
+/* Search Field Polish */
+#searchField {
+    -fx-background-color: #f1f1f1;
+    -fx-border-color: transparent;
+    -fx-background-radius: 20;
+    -fx-padding: 8 15 8 15;
+}
+
+#searchField:focused {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #000000;
+}
+
+/* Delete Button - Soft Red instead of Bright Red */
+.delete-button {
+    -fx-background-color: #fff1f0;
+    -fx-text-fill: #ff4d4f;
+    -fx-border-color: #ffa39e;
+    -fx-border-radius: 20;
+    -fx-background-radius: 20;
+}
+
+.delete-button:hover {
+    -fx-background-color: #ff4d4f;
+    -fx-text-fill: white;
+}
+/* Category Badges */
+.category-badge-coffee {
+    -fx-background-color: #efebe9;
+    -fx-text-fill: #5d4037;
+    -fx-padding: 2 8;
+    -fx-background-radius: 10;
+}
+
+.category-badge-pastry {
+    -fx-background-color: #fff3e0;
+    -fx-text-fill: #e65100;
+    -fx-padding: 2 8;
+    -fx-background-radius: 10;
+}
+/* Style for the dashed upload area */
+.image-upload-box {
+    -fx-border-color: #000000;
+    -fx-border-width: 1;
+    -fx-border-style: segments(10, 10) dashed;
+    -fx-border-radius: 10;
+}

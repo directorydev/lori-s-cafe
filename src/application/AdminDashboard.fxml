@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1000.0" stylesheets="@application.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.DashboardController">
+<BorderPane fx:id="mainContainer" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1000.0" stylesheets="@application.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.DashboardController">
    <left>
       <VBox prefWidth="230.0" spacing="10.0" style="-fx-background-color: #2b2b2b;" BorderPane.alignment="CENTER">
          <children>
@@ -22,8 +22,8 @@
                   <Insets bottom="20.0" left="35.0" top="20.0" />
                </VBox.margin>
             </ImageView>
-            <Button alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="45.0" styleClass="sidebar-button" text="Dashboard" textFill="WHITE" />
-            <Button alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="45.0" styleClass="sidebar-button" text="Menu Management" textFill="WHITE" />
+            <Button alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#showDashboard" prefHeight="45.0" styleClass="sidebar-button" text="Dashboard" textFill="WHITE" />
+            <Button alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#showMenuManagement" prefHeight="45.0" styleClass="sidebar-button" text="Menu Management" textFill="WHITE" />
             <Button alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="45.0" styleClass="sidebar-button" text="Orders" textFill="WHITE" />
             <Button alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="45.0" styleClass="sidebar-button" text="Inventory" textFill="WHITE" />
             <VBox alignment="BOTTOM_CENTER" VBox.vgrow="ALWAYS">
@@ -45,7 +45,7 @@
          <content>
             <VBox spacing="20.0" style="-fx-background-color: #f4f4f4;">
                <children>
-                  <Label text="Welcome, Admin!">
+                  <Label prefHeight="51.0" prefWidth="226.0" text="Welcome, Admin!" VBox.vgrow="ALWAYS">
                      <font>
                         <Font name="System Bold" size="28.0" />
                      </font>

@@ -54,26 +54,29 @@ public class LoginController {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("AdminDashboard.fxml"));
                 Parent dashboard = loader.load();
                 
-                // 1. Get the current Stage
                 Stage stage = (Stage) usernameField.getScene().getWindow();
                 
-                // 2. Set opacity to 0 before showing
-                dashboard.setOpacity(0);
+                // --- SET LOGO AND CONSISTENT TITLE ---
+                try {
+                    stage.getIcons().clear();
+                    stage.getIcons().add(new javafx.scene.image.Image(getClass().getResourceAsStream("Lorislogo.jpg")));
+                } catch (Exception imgEx) {
+                    System.out.println("Warning: Icon could not be loaded.");
+                }
                 
+                stage.setTitle("Lori's Taste Cafe"); // Clean, consistent title
+                // -------------------------------------
+                
+                dashboard.setOpacity(0);
                 Scene scene = new Scene(dashboard);
                 stage.setScene(scene);
-                
-                // 3. Smoothly Maximize
                 stage.setMaximized(true);
                 stage.show();
                 
-                // 4. Create the Fade-In Animation
                 javafx.animation.FadeTransition fadeIn = new javafx.animation.FadeTransition(javafx.util.Duration.millis(500), dashboard);
                 fadeIn.setFromValue(0.0);
                 fadeIn.setToValue(1.0);
                 fadeIn.play();
-                
-                System.out.println("Smooth transition to Dashboard complete.");
                 
             } catch (Exception e) {
                 e.printStackTrace();

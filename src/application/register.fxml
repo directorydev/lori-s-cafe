@@ -29,7 +29,7 @@
                   <InnerShadow blurType="TWO_PASS_BOX" height="8.16" radius="2.71" width="4.68" />
                </effect>
             </TextField>
-            <TextField fx:id="regUsernameField" maxWidth="250.0" prefWidth="250.0" promptText="Username" stylesheets="@application.css">
+            <TextField fx:id="regUsernameField" maxWidth="250.0" prefWidth="250.0" promptText="Email" stylesheets="@application.css">
                <effect>
                   <InnerShadow blurType="TWO_PASS_BOX" height="8.16" radius="2.71" width="4.68" />
                </effect>
