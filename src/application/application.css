@@ -51,17 +51,41 @@
 
 /* 2. This handles ONLY your Bold Titles */
 
+/* Sidebar Background */
+.sidebar {
+    -fx-background-color: #262626; /* Dark Graphite */
+}
+
+/* Sidebar Buttons */
 .sidebar-button {
     -fx-background-color: transparent;
-    -fx-text-fill: white;
-    -fx-transition: 0.3s; /* Smooth color change */
-    -fx-cursor: hand;
+    -fx-text-fill: #cccccc;
+    -fx-font-size: 14px;
+    -fx-padding: 0 0 0 20;
+    -fx-background-radius: 10;
 }
 
 .sidebar-button:hover {
-    -fx-background-color: #3d3d3d;
-    /* This adds a subtle "glow" effect when hovering */
-    -fx-effect: dropshadow(three-pass-box, rgba(255,255,255,0.1), 10, 0, 0, 0);
+    -fx-background-color: #333333;
+    -fx-text-fill: white;
+}
+
+/* Active Button State (When you are on that page) */
+.sidebar-button:pressed {
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #000000;
+}
+
+/* The Logout Button */
+.logout-button {
+    -fx-background-color: #ff4d4d;
+    -fx-text-fill: white;
+    -fx-background-radius: 25;
+    -fx-font-weight: bold;
+}
+
+.logout-button:hover {
+    -fx-background-color: #ff3333;
 }
 
 /* Remove the ugly default TableView borders */
@@ -155,4 +179,55 @@
     -fx-border-width: 1;
     -fx-border-style: segments(10, 10) dashed;
     -fx-border-radius: 10;
+}
+/* 1. The Main ComboBox Container */
+/* 1. The Main Capsule */
+.combo-box {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #e0e0e0;
+    -fx-border-radius: 25; 
+    -fx-background-radius: 25;
+    -fx-padding: 5 15 5 15;
+}
+
+/* 2. THE FIX: This removes the black background specifically */
+.combo-box > .list-cell {
+    -fx-background-color: transparent !important;
+    -fx-text-fill: #999999;
+}
+
+/* Ensure text turns dark when a category is picked */
+.combo-box:filled > .list-cell {
+    -fx-text-fill: #333333;
+}
+
+/* 3. The Arrow Section */
+.combo-box .arrow-button {
+    -fx-background-color: transparent;
+}
+
+.combo-box .arrow {
+    -fx-background-color: #666666;
+}
+
+/* 4. The Dropdown List (Keeping the style you liked) */
+.combo-box-base .list-view {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 15;
+    -fx-border-color: #e0e0e0;
+    -fx-border-radius: 15;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);
+}
+
+.combo-box-base .list-cell {
+    -fx-padding: 10 15 10 15;
+    -fx-background-color: transparent;
+}
+
+.combo-box-base .list-cell:hover {
+    -fx-background-color: #1F1F1F;
+}
+
+.combo-box-base .list-cell:selected {
+    -fx-text-fill: #111111;
 }
