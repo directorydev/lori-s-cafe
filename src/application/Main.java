@@ -14,13 +14,15 @@ public class Main extends Application {
 	        Parent root = FXMLLoader.load(getClass().getResource("Login.fxml"));
 	        Scene scene = new Scene(root);
 	        
-	        // --- ADD THIS LINE TO SET THE LOGO ---
-	     // Try this "Root Path" approach
+	        // Set the Logo
 	        primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/application/Lorislogo.jpg")));
-	        // -------------------------------------
 
 	        primaryStage.setTitle("Lori's Taste Cafe");
 	        primaryStage.setScene(scene);
+	        
+	        // --- NEW: Make the application launch in full screen/maximized ---
+	        primaryStage.setMaximized(true);
+	        
 	        primaryStage.show();
 	    } catch(Exception e) {
 	        e.printStackTrace();

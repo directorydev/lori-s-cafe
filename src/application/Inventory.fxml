@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox spacing="20.0" styleClass="page-container" stylesheets="@application.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.InventoryController">
+   <children>
+      
+      <!-- Top Toggle -->
+      <HBox alignment="CENTER">
+         <children>
+            <HBox styleClass="pill-nav-container">
+               <children>
+                  <ToggleButton mnemonicParsing="false" selected="true" styleClass="nav-pill" text="Products">
+                     <toggleGroup>
+                        <ToggleGroup fx:id="inventoryTabs" />
+                     </toggleGroup>
+                  </ToggleButton>
+                  <ToggleButton mnemonicParsing="false" styleClass="nav-pill" text="Raw Materials" toggleGroup="$inventoryTabs" />
+               </children>
+            </HBox>
+         </children>
+      </HBox>
+
+      <!-- Header -->
+      <HBox alignment="CENTER_LEFT">
+         <children>
+            <VBox>
+               <children>
+                  <Label styleClass="header-title" text="Inventory Management" />
+                  <Label styleClass="header-subtitle" text="Lori's Taste Cafe products and stock levels" />
+               </children>
+            </VBox>
+            <Pane HBox.hgrow="ALWAYS" />
+            <Button mnemonicParsing="false" onAction="#handleAddProduct" styleClass="primary-btn" text="+ Add Product" />
+         </children>
+      </HBox>
+
+      <!-- ACCURATE SUMMARY CARDS (Kept only the modern set) -->
+      <HBox spacing="20.0">
+         <children>
+            <VBox styleClass="summary-card, card-blue" HBox.hgrow="ALWAYS">
+               <Label styleClass="card-top-title" text="Total Products" />
+               <Label fx:id="totalProductsLabel" styleClass="card-main-value" text="0" />
+               <Label styleClass="card-description" text="Active inventory items" />
+            </VBox>
+            <VBox styleClass="summary-card, card-green" HBox.hgrow="ALWAYS">
+               <Label styleClass="card-top-title" text="Total Value" />
+               <Label fx:id="totalValueLabel" styleClass="card-main-value" text="₱0" />
+               <Label styleClass="card-description" text="Inventory worth" />
+            </VBox>
+            <VBox styleClass="summary-card, card-orange" HBox.hgrow="ALWAYS">
+               <Label styleClass="card-top-title" text="Low Stock" />
+               <Label fx:id="lowStockLabel" styleClass="card-main-value" text="0" />
+               <Label styleClass="card-description" text="Items need restocking" />
+            </VBox>
+            <VBox styleClass="summary-card, card-purple" HBox.hgrow="ALWAYS">
+               <Label styleClass="card-top-title" text="Avg Stock Level" />
+               <Label fx:id="avgStockLabel" styleClass="card-main-value" text="0" />
+               <Label styleClass="card-description" text="Units per product" />
+            </VBox>
+         </children>
+      </HBox>
+
+      <!-- Filters -->
+      <HBox spacing="15.0">
+         <children>
+            <TextField fx:id="searchField" prefWidth="300.0" promptText="Search products by name or description..." styleClass="custom-input" />
+            <ComboBox fx:id="categoryCombo" prefWidth="180.0" promptText="All Categories" styleClass="custom-input" />
+            <ComboBox fx:id="stockLevelCombo" prefWidth="180.0" promptText="All Stock Levels" styleClass="custom-input" />
+         </children>
+      </HBox>
+
+      <!-- Dynamic Product Grid -->
+      <ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-background: #f4f4f5;" VBox.vgrow="ALWAYS">
+         <content>
+            <FlowPane fx:id="productGrid" hgap="20.0" vgap="20.0">
+               <padding>
+                  <Insets bottom="10.0" left="5.0" right="5.0" top="10.0" />
+               </padding>
+            </FlowPane>
+         </content>
+      </ScrollPane>
+   </children>
+</VBox>

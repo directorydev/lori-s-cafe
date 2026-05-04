@@ -1,77 +1,104 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
-<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.effect.DropShadow?>
-<?import javafx.scene.effect.InnerShadow?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.paint.Color?>
-<?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" stylesheets="@application.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.LoginController">
+<StackPane prefHeight="700.0" prefWidth="1000.0" styleClass="main-bg" stylesheets="@application.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.LoginController">
    <children>
-      <SplitPane dividerPositions="0.33" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-        <items>
-          <AnchorPane minWidth="200.0" prefWidth="200.0" SplitPane.resizableWithParent="false">
-               <children>
-                  <VBox alignment="CENTER" style="-fx-background-color: #ffffff;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                     <children>
-                        <ImageView fitHeight="150.0" fitWidth="180.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@Lorislogo.jpg" />
-                           </image>
-                        </ImageView>
-                     </children>
-                  </VBox>
-               </children>
-            </AnchorPane>
+      <!-- Center Login Card -->
+      <VBox fx:id="contentArea" alignment="TOP_CENTER" maxWidth="420.0" prefHeight="650.0" spacing="25.0" styleClass="login-card">
+         <padding>
+            <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
+         </padding>
+         <children>
             
-          <AnchorPane>
+            <ImageView fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@Lorislogo.jpg" />
+               </image>
+            </ImageView>
+
+            <VBox alignment="CENTER" spacing="5.0">
                <children>
-                  <VBox fx:id="contentArea" alignment="CENTER" spacing="20.0" style="-fx-background-color: #fafafa;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                     <children>
-                        <Label text="SIGN IN">
-                           <font>
-                              <Font name="System Bold" size="26.0" />
-                           </font>
-                        </Label>
-                        <TextField fx:id="usernameField" alignment="CENTER" maxWidth="250.0" onAction="#handleLogin" prefHeight="35.0" prefWidth="250.0" promptText="EMAIL">
-                           <effect>
-                              <InnerShadow blurType="TWO_PASS_BOX" height="8.16" radius="2.71" width="4.68" />
-                           </effect>
-                        </TextField>
-                        <PasswordField fx:id="passwordField" alignment="CENTER" maxWidth="250.0" onAction="#handleLogin" prefHeight="35.0" prefWidth="250.0" promptText="PASSWORD">
-                           <effect>
-                              <InnerShadow blurType="TWO_PASS_BOX" height="11.64" radius="3.58" width="4.68" />
-                           </effect>
-                        </PasswordField>
-                        <HBox alignment="CENTER" spacing="15.0">
-                           <children>
-                              <Button defaultButton="true" mnemonicParsing="false" onAction="#handleLogin" prefHeight="40.0" prefWidth="120.0" text="Login" />
-                              <Button mnemonicParsing="false" onAction="#handleRegister" prefHeight="40.0" prefWidth="120.0" styleClass="button-outline" text="Register" />
-                           </children>
-                        </HBox>
-                        <Hyperlink onAction="#handleForgotPassword" text="Forgot Password?" />
-                     </children>
-                     <effect>
-                        <DropShadow>
-                           <color>
-                              <Color red="0.29" green="0.21" blue="0.21" />
-                           </color>
-                        </DropShadow>
-                     </effect>
-                  </VBox>
+                  <Label styleClass="header-title" text="Lori's Taste Cafe" />
+                  <Label styleClass="header-subtitle" text="Sign in to access the point of sale system" />
                </children>
-            </AnchorPane>
-        </items>
-      </SplitPane>
+            </VBox>
+
+            <!-- Pill Toggle Switch -->
+            <HBox alignment="CENTER" styleClass="toggle-container">
+               <children>
+                  <RadioButton fx:id="staffRadio" maxWidth="Infinity" mnemonicParsing="false" selected="true" styleClass="role-radio" text="Staff Access" HBox.hgrow="ALWAYS">
+                     <toggleGroup>
+                        <ToggleGroup fx:id="roleGroup" />
+                     </toggleGroup>
+                  </RadioButton>
+                  <RadioButton fx:id="adminRadio" maxWidth="Infinity" mnemonicParsing="false" styleClass="role-radio" text="Admin Access" toggleGroup="$roleGroup" HBox.hgrow="ALWAYS" />
+               </children>
+            </HBox>
+
+            <VBox spacing="15.0">
+               <children>
+                  <VBox spacing="5.0">
+                     <children>
+                        <Label styleClass="input-label" text="Username" />
+                        <TextField fx:id="usernameField" promptText="Enter username" styleClass="custom-input" />
+                     </children>
+                  </VBox>
+                  <VBox spacing="5.0">
+                     <children>
+                        <Label styleClass="input-label" text="Password" />
+                        <PasswordField fx:id="passwordField" promptText="Enter password" styleClass="custom-input" />
+                     </children>
+                  </VBox>
+                  
+                  <Button defaultButton="true" maxWidth="Infinity" mnemonicParsing="false" onAction="#handleLogin" styleClass="primary-btn" text="Sign In">
+                     <VBox.margin>
+                        <Insets top="10.0" />
+                     </VBox.margin>
+                  </Button>
+                  
+                  <Button maxWidth="Infinity" mnemonicParsing="false" onAction="#handleRegister" styleClass="secondary-btn" text="Register Staff Account" />
+               </children>
+            </VBox>
+
+            <Hyperlink onAction="#handleForgotPassword" styleClass="forgot-link" text="Forgot Password?" />
+
+            <!-- DEMO ACCOUNTS SECTION -->
+            <VBox fx:id="demoAccountsBox" spacing="10.0" styleClass="demo-box">
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin>
+               <children>
+                  <Label styleClass="demo-header" text="Demo Accounts:" />
+                  <HBox alignment="CENTER_LEFT" spacing="15.0" styleClass="demo-inner-box">
+                     <children>
+                        <VBox spacing="2.0">
+                           <children>
+                              <Label fx:id="demoUserLabel" styleClass="demo-info-label" text="Cashier: staff1" />
+                              <Label fx:id="demoPassLabel" styleClass="demo-info-label" text="Password: staff123" />
+                           </children>
+                        </VBox>
+                        <Pane HBox.hgrow="ALWAYS" /> <!-- Fills the space -->
+                        <Button fx:id="useDemoAccountButton" mnemonicParsing="false" onAction="#handleUseDemoAccount" styleClass="demo-btn" text="Use Account" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+
+         </children>
+      </VBox>
    </children>
-</AnchorPane>
+</StackPane>

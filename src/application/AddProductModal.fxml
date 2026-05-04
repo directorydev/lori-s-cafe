@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<VBox spacing="15.0" style="-fx-background-color: white; -fx-background-radius: 10;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.InventoryController">
+   <children>
+   
+   <Label fx:id="modalHeaderLabel" text="Add New Product">
+   		<font><Font name="System Bold" size="18.0" /></font>
+	</Label>
+	
+      <Label text="Add New Product">
+         <font><Font name="System Bold" size="18.0" /></font>
+      </Label>
+      
+      <VBox spacing="5.0">
+         <children>
+            <Label text="Product Name" style="-fx-font-weight: bold;" />
+            <TextField fx:id="nameInput" promptText="Enter product name" styleClass="custom-input" />
+         </children>
+      </VBox>
+
+      <VBox spacing="5.0">
+         <children>
+            <Label text="Category" style="-fx-font-weight: bold;" />
+            <ComboBox fx:id="categoryInput" maxWidth="Infinity" styleClass="custom-input" />
+         </children>
+      </VBox>
+
+      <HBox spacing="15.0">
+         <children>
+            <VBox HBox.hgrow="ALWAYS">
+               <Label text="Price (₱)" style="-fx-font-weight: bold;" />
+               <TextField fx:id="priceInput" promptText="0.00" styleClass="custom-input" />
+            </VBox>
+            <VBox HBox.hgrow="ALWAYS">
+               <Label text="Cost (₱)" style="-fx-font-weight: bold;" />
+               <TextField fx:id="costInput" promptText="0.00" styleClass="custom-input" />
+            </VBox>
+         </children>
+      </HBox>
+
+      <HBox spacing="15.0">
+         <children>
+            <VBox HBox.hgrow="ALWAYS">
+               <Label text="Current Stock" style="-fx-font-weight: bold;" />
+               <TextField fx:id="stockInput" promptText="0" styleClass="custom-input" />
+            </VBox>
+            <VBox HBox.hgrow="ALWAYS">
+               <Label text="Minimum Stock" style="-fx-font-weight: bold;" />
+               <TextField fx:id="minStockInput" promptText="0" styleClass="custom-input" />
+            </VBox>
+         </children>
+      </HBox>
+
+      <VBox spacing="5.0">
+         <children>
+            <Label text="Description" style="-fx-font-weight: bold;" />
+            <TextArea fx:id="descInput" prefHeight="80.0" promptText="Enter product description" wrapText="true" />
+         </children>
+      </VBox>
+
+      <HBox alignment="CENTER_RIGHT" spacing="10.0">
+         <children>
+            <Button onAction="#handleCloseModal" styleClass="secondary-btn" text="Cancel" />
+            <Button onAction="#saveNewProduct" style="-fx-background-color: #2d3748; -fx-text-fill: white;" text="Add Product" />
+         </children>
+      </HBox>
+   </children>
+   <padding>
+      <Insets bottom="25.0" left="25.0" right="25.0" top="25.0" />
+   </padding>
+</VBox>
