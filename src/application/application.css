@@ -185,6 +185,7 @@
 }
 
 /* Dynamic Product Card */
+/* Enhanced Product Card */
 .product-card {
     -fx-background-color: #ffffff;
     -fx-border-color: #e5e7eb;
@@ -194,51 +195,71 @@
     -fx-pref-width: 330px;
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.03), 10, 0, 0, 4);
 }
+
 .product-card:hover {
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.08), 10, 0, 0, 5);
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.08), 12, 0, 0, 6);
+    -fx-border-color: #d1d5db;
 }
 
+/* Typography Refinements */
 .product-title { -fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #111827; }
 .product-desc { -fx-font-size: 12px; -fx-text-fill: #6b7280; }
+.price-label { -fx-font-size: 11px; -fx-text-fill: #6b7280; -fx-font-weight: bold; }
 
-/* Product Tags */
-.tag-category { -fx-background-color: #fef08a; -fx-text-fill: #854d0e; -fx-padding: 3 8; -fx-background-radius: 10px; -fx-font-size: 11px; -fx-font-weight: bold; }
-.tag-instock { -fx-background-color: #dcfce7; -fx-text-fill: #166534; -fx-padding: 3 8; -fx-background-radius: 10px; -fx-font-size: 11px; -fx-font-weight: bold; }
-.tag-lowstock { -fx-background-color: #fee2e2; -fx-text-fill: #991b1b; -fx-padding: 3 8; -fx-background-radius: 10px; -fx-font-size: 11px; -fx-font-weight: bold; }
+/* Pricing Colors */
+.price-value-sell { -fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #16a34a; }
+.price-value-cost { -fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #374151; }
 
-/* Product Pricing & Stock */
-.price-label { -fx-font-size: 11px; -fx-text-fill: #6b7280; }
-.price-value-sell { -fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #16a34a; }
-.price-value-cost { -fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #111827; }
-.stock-text { -fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #16a34a; }
+/* Progress Bar Customization */
+.stock-bar { -fx-accent: #22c55e; -fx-control-inner-background: #f3f4f6; -fx-pref-height: 8px; }
+.stock-bar .track { -fx-background-radius: 10px; -fx-border-radius: 10px; }
+.stock-bar .bar { -fx-background-radius: 10px; }
 
-/* Progress Bar override */
-.stock-bar { -fx-accent: #22c55e; -fx-control-inner-background: #f3f4f6; }
-.stock-bar .track { -fx-background-radius: 5px; -fx-border-radius: 5px; }
-.stock-bar .bar { -fx-background-radius: 5px; -fx-padding: 3px; }
-
-/* Outline Button */
+/* Modern Adjust Stock Button */
 .adjust-btn {
-    -fx-background-color: transparent;
-    -fx-border-color: #d1d5db;
-    -fx-border-radius: 6px;
-    -fx-padding: 8px;
+    -fx-background-color: #f9fafb;
+    -fx-border-color: #e5e7eb;
+    -fx-border-radius: 8px;
+    -fx-padding: 10px;
     -fx-cursor: hand;
     -fx-font-weight: bold;
-    -fx-text-fill: #374151;
+    -fx-text-fill: #4b5563;
+    -fx-transition: 0.2s;
 }
-.adjust-btn:hover { -fx-background-color: #f9fafb; -fx-text-fill: #111827; }
+.adjust-btn:hover {
+    -fx-background-color: #f3f4f6;
+    -fx-text-fill: #111827;
+    -fx-border-color: #d1d5db;
+}
 
+/* Icon Buttons */
+.icon-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #9ca3af;
+    -fx-cursor: hand;
+    -fx-padding: 5;
+}
+.icon-button:hover {
+    -fx-text-fill: #ef4444; /* Red for delete hover effect */
+    -fx-background-color: #fee2e2;
+    -fx-background-radius: 4;
+}
+
+.adjust-btn {
+    -fx-background-color: #f4f4f5;
+    -fx-border-color: #e4e4e7;
+    -fx-border-radius: 6px;
+    -fx-text-fill: #18181b;
+    -fx-font-weight: bold;
+    -fx-padding: 8px;
+    -fx-cursor: hand;
+}
+.adjust-btn:hover {
+    -fx-background-color: #e4e4e7;
+}
 
 .icon-button {
     -fx-background-color: transparent;
     -fx-cursor: hand;
     -fx-font-size: 14px;
 }
-.icon-button:hover { -fx-background-color: #f3f4f6; }
-
-.card-blue { -fx-border-color: #2563eb; -fx-border-width: 0 0 0 5; }
-.card-green { -fx-border-color: #16a34a; -fx-border-width: 0 0 0 5; }
-.card-orange { -fx-border-color: #ea580c; -fx-border-width: 0 0 0 5; }
-.card-purple { -fx-border-color: #7e22ce; -fx-border-width: 0 0 0 5; }
-

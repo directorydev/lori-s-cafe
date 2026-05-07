@@ -20,8 +20,12 @@ public class RawMaterial {
     public double getCurrentStock() { return currentStock; }
     public double getMinStock() { return minStock; }
 
+ // Logic inside RawMaterial.java for the UI
     public double getStockPercentage() {
-        if (minStock == 0) return 1.0;
+        if (minStock <= 0) return 1.0;
+        // Calculation for the green progress bar: 1.0 is full, 0.5 is at minimum
         return Math.min(1.0, currentStock / (minStock * 2.0));
     }
+    
+    
 }

@@ -2,11 +2,10 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.Font?>
 
 <VBox spacing="15.0" styleClass="main-bg" stylesheets="@application.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.InventoryController">
    <children>
-      <Label fx:id="modalHeaderLabel" text="Add New Product" styleClass="header-title" />
+      <Label fx:id="modalHeaderLabel" styleClass="header-title" text="Add New Product" />
       
       <TabPane tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
         <tabs>
@@ -15,21 +14,28 @@
               <VBox spacing="15.0" style="-fx-padding: 20;">
                  <children>
                     <VBox spacing="5.0">
-                       <Label text="Product Name" styleClass="input-label" />
+                       <Label styleClass="input-label" text="Product Name" />
                        <TextField fx:id="nameInput" promptText="Enter product name" styleClass="custom-input" />
                     </VBox>
+
+                    <VBox spacing="5.0">
+                       <Label styleClass="input-label" text="Category" />
+                       <ComboBox fx:id="categoryInput" maxWidth="Infinity" promptText="Select Category" styleClass="custom-input" />
+                    </VBox>
+
                     <HBox spacing="15.0">
                        <VBox HBox.hgrow="ALWAYS">
-                          <Label text="Selling Price (₱)" styleClass="input-label" />
+                          <Label styleClass="input-label" text="Selling Price (₱)" />
                           <TextField fx:id="priceInput" promptText="0.00" styleClass="custom-input" />
                        </VBox>
                        <VBox HBox.hgrow="ALWAYS">
-                          <Label text="Cost Price (₱)" styleClass="input-label" />
+                          <Label styleClass="input-label" text="Cost Price (₱)" />
                           <TextField fx:id="costInput" promptText="0.00" styleClass="custom-input" />
                        </VBox>
                     </HBox>
+
                     <VBox spacing="5.0">
-                       <Label text="Stock Management" styleClass="input-label" />
+                       <Label styleClass="input-label" text="Stock Management" />
                        <HBox spacing="15.0">
                           <TextField fx:id="stockInput" promptText="Current Stock" styleClass="custom-input" HBox.hgrow="ALWAYS" />
                           <TextField fx:id="minStockInput" promptText="Min. Stock" styleClass="custom-input" HBox.hgrow="ALWAYS" />
@@ -39,11 +45,11 @@
               </VBox>
             </content>
           </Tab>
+
           <Tab text="Ingredients">
              <content>
                 <VBox spacing="10.0" style="-fx-padding: 20;">
-                   <Label text="Select raw materials and quantities..." styleClass="header-subtitle" />
-                   <!-- Placeholder for recipe connection logic -->
+                   <Label styleClass="header-subtitle" text="Select raw materials and quantities..." />
                    <ListView fx:id="ingredientSelectionList" prefHeight="200.0" />
                 </VBox>
              </content>
