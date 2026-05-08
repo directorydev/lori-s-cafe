@@ -70,11 +70,14 @@
 
       <!-- Filtering Section[cite: 7] -->
       <HBox spacing="15.0">
-         <children>
-            <TextField fx:id="searchField" prefWidth="300.0" promptText="Search items..." styleClass="custom-input" />
-            <ComboBox fx:id="categoryCombo" prefWidth="180.0" promptText="All Categories" styleClass="custom-input" />
-         </children>
-      </HBox>
+   <children>
+      <TextField fx:id="searchField" prefWidth="300.0" promptText="Search items..." styleClass="custom-input" />
+      
+      <ComboBox fx:id="stockLevelCombo" prefWidth="180.0" promptText="All Stock Levels" styleClass="custom-input" />
+      
+      <ComboBox fx:id="categoryCombo" prefWidth="180.0" promptText="All Categories" styleClass="custom-input" />
+   </children>
+</HBox>
 
       <!-- Scrollable Grid for Cards[cite: 2, 7] -->
       <ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-background: #f4f4f5;" VBox.vgrow="ALWAYS">
@@ -86,5 +89,8 @@
             </FlowPane>
          </content>
       </ScrollPane>
+      
+      
+      
    </children>
 </VBox>
