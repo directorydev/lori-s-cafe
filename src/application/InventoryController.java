@@ -12,9 +12,10 @@ import java.sql.*;
 
 public class InventoryController {
 
-    private static final String DB_URL = "jdbc:postgresql://localhost:5432/loris_cafe_db";
+	// SUPABASE CLOUD CONNECTION
+	private static final String DB_URL = "jdbc:postgresql://db.gwjmqejlljupondbzbs.supabase.co:5432/postgres?sslmode=require";
     private static final String DB_USER = "postgres";
-    private static final String DB_PASS = "user123"; 
+    private static final String DB_PASS = "Loritastecafe2026"; // Delete this text and type your actual Supabase password; 
 
     @FXML private FlowPane productGrid;
     @FXML private ToggleGroup inventoryTabs;
