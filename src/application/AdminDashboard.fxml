@@ -1,24 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.control.ToggleGroup?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane fx:id="mainContainer" prefHeight="800.0" prefWidth="1280.0" styleClass="main-bg" stylesheets="@application.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.DashboardController">
+<BorderPane fx:id="mainContainer" prefHeight="800.0" prefWidth="1280.0" styleClass="main-bg" stylesheets="@application.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.DashboardController">
    <top>
       <VBox styleClass="main-header" BorderPane.alignment="CENTER">
          <children>
             <!-- Header Bar -->
-            <HBox alignment="CENTER_LEFT" styleClass="top-header">
+            <HBox alignment="CENTER" styleClass="top-header">
                <children>
                   <VBox alignment="CENTER_LEFT" spacing="2.0">
                      <children>
@@ -46,7 +43,6 @@
                               <ToggleGroup fx:id="mainNavToggleGroup" />
                            </toggleGroup>
                         </ToggleButton>
-                        <ToggleButton fx:id="posToggle" mnemonicParsing="false" onAction="#handlePOS" styleClass="nav-pill" text="POS" toggleGroup="$mainNavToggleGroup" />
                         <ToggleButton fx:id="inventoryToggle" mnemonicParsing="false" onAction="#showInventory" styleClass="nav-pill" text="Inventory" toggleGroup="$mainNavToggleGroup" />
                         <ToggleButton fx:id="ordersToggle" mnemonicParsing="false" onAction="#showOrders" styleClass="nav-pill" text="Orders" toggleGroup="$mainNavToggleGroup" />
                         <ToggleButton fx:id="analyticsToggle" mnemonicParsing="false" onAction="#handleAnalytics" styleClass="nav-pill" text="Analytics" toggleGroup="$mainNavToggleGroup" />
@@ -91,7 +87,7 @@
                         <!-- Start Sale (Blue) -->
                         <VBox alignment="CENTER_LEFT" prefWidth="300.0" spacing="15.0" styleClass="dashboard-card, card-blue" HBox.hgrow="ALWAYS">
                            <children>
-                              <HBox spacing="10.0" alignment="TOP_LEFT">
+                              <HBox alignment="TOP_LEFT" spacing="10.0">
                                  <children>
                                     <Label styleClass="card-top-title" text="New Order" />
                                     <Pane HBox.hgrow="ALWAYS" />
@@ -105,7 +101,7 @@
                         <!-- Inventory (Green) -->
                         <VBox prefWidth="300.0" spacing="15.0" styleClass="dashboard-card, card-green" HBox.hgrow="ALWAYS">
                            <children>
-                              <HBox spacing="10.0" alignment="TOP_LEFT">
+                              <HBox alignment="TOP_LEFT" spacing="10.0">
                                  <children>
                                     <Label styleClass="card-top-title" text="Inventory" />
                                     <Pane HBox.hgrow="ALWAYS" />
@@ -119,7 +115,7 @@
                         <!-- Sales (Purple) -->
                         <VBox prefWidth="300.0" spacing="15.0" styleClass="dashboard-card, card-purple" HBox.hgrow="ALWAYS">
                            <children>
-                              <HBox spacing="10.0" alignment="TOP_LEFT">
+                              <HBox alignment="TOP_LEFT" spacing="10.0">
                                  <children>
                                     <Label styleClass="card-top-title" text="Today's Sales" />
                                     <Pane HBox.hgrow="ALWAYS" />
@@ -133,7 +129,7 @@
                         <!-- Orders (Orange) -->
                         <VBox prefWidth="300.0" spacing="15.0" styleClass="dashboard-card, card-orange" HBox.hgrow="ALWAYS">
                            <children>
-                              <HBox spacing="10.0" alignment="TOP_LEFT">
+                              <HBox alignment="TOP_LEFT" spacing="10.0">
                                  <children>
                                     <Label styleClass="card-top-title" text="Orders" />
                                     <Pane HBox.hgrow="ALWAYS" />
@@ -151,7 +147,7 @@
                         <!-- Manage Promotions (Green) -->
                         <VBox prefWidth="300.0" spacing="15.0" styleClass="dashboard-card, card-green" HBox.hgrow="ALWAYS">
                            <children>
-                              <HBox spacing="10.0" alignment="TOP_LEFT">
+                              <HBox alignment="TOP_LEFT" spacing="10.0">
                                  <children>
                                     <Label styleClass="card-top-title" text="Promotions" />
                                     <Pane HBox.hgrow="ALWAYS" />
@@ -165,7 +161,7 @@
                         <!-- System Config (Blue) -->
                         <VBox prefWidth="300.0" spacing="15.0" styleClass="dashboard-card, card-blue" HBox.hgrow="ALWAYS">
                            <children>
-                              <HBox spacing="10.0" alignment="TOP_LEFT">
+                              <HBox alignment="TOP_LEFT" spacing="10.0">
                                  <children>
                                     <Label styleClass="card-top-title" text="Settings" />
                                     <Pane HBox.hgrow="ALWAYS" />

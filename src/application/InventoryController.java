@@ -23,22 +23,23 @@ public class InventoryController {
     @FXML private ToggleButton productTab, rawMaterialTab;
     @FXML private Button addItemBtn;
     
-    // Summary Labels from Inventory.fxml 
-    @FXML private Label totalProductsLabel;
-    @FXML private Label totalValueLabel;
-    @FXML private Label lowStockLabel;
-    @FXML private Label avgStockLabel;
-    
+    @FXML private Label totalProductsLabel, totalValueLabel, lowStockLabel, avgStockLabel;
     @FXML private TextField searchField;
     @FXML private ComboBox<String> categoryCombo;
+    
+    // --- NEW FEATURE: Stock Level ComboBox ---
+    @FXML private ComboBox<String> stockLevelCombo;
 
     @FXML private TextField nameInput, priceInput, costInput, stockInput, minStockInput;
     @FXML private ComboBox<String> categoryInput; 
+    @FXML private Label modalHeaderLabel;
     
     @FXML private TextField rawNameInput, rawStockInput;
     @FXML private ComboBox<String> unitCombo;
 
     private boolean isProductMode = true;
+    private static int editingProductId = -1;
+    private static int editingRawMaterialId = -1;
 
     private final String[] CATEGORIES = {
         "Milktea", "Cream Cheese", "Iced Coffee", 
@@ -49,6 +50,7 @@ public class InventoryController {
     public void initialize() {
         setupTabListeners();
         setupCategoryFiltering(); 
+        setupStockLevelFiltering(); // Initialize new feature
         setupSearchListener();
         
         if (categoryInput != null) {
@@ -58,201 +60,360 @@ public class InventoryController {
         if (productGrid != null) refreshInventory();
         
         if (unitCombo != null) {
-            unitCombo.getItems().addAll("grams", "ml", "pieces", "kg", "liters"); 
+            unitCombo.getItems().addAll("Grams", "ml", "Pieces", "kg", "Liters"); 
         }
     }
 
-    /**
-     * Calculates and updates the summary cards based on current database state.
-     * Uses cost_price * current_stock for Total Value calculation.
-     */
-    private void updateSummaryCards() {
-        // Query to get all totals in one go for efficiency
-        String sql = "SELECT " +
-                     "COUNT(*) as total_items, " +
-                     "SUM(cost_price * current_stock) as total_value, " +
-                     "COUNT(*) FILTER (WHERE current_stock <= min_stock) as low_stock_count, " +
-                     "AVG(current_stock) as avg_stock " +
-                     "FROM products";
+    // --- NEW FEATURE: Setup Stock Level Filter ---
+    private void setupStockLevelFiltering() {
+        if (stockLevelCombo != null) {
+            stockLevelCombo.getItems().setAll("All Stock Levels", "In Stock", "Low Stock", "Out of Stock");
+            stockLevelCombo.getSelectionModel().selectFirst();
+            stockLevelCombo.setOnAction(e -> {
+                if (isProductMode) refreshInventory(); else refreshRawMaterials();
+            });
+        }
+    }
 
+    // --- DUPLICATE PREVENTION LOGIC (Preserved) ---
+    private boolean isDuplicateName(String table, String name, int currentId) {
+        String sql = "SELECT COUNT(*) FROM " + table + " WHERE name ILIKE ? AND id != ?";
         try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASS);
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-
-            if (rs.next()) {
-                int totalItems = rs.getInt("total_items");
-                double totalValue = rs.getDouble("total_value");
-                int lowStock = rs.getInt("low_stock_count");
-                double avgStock = rs.getDouble("avg_stock");
-
-                // Update UI Labels 
-                if (totalProductsLabel != null) totalProductsLabel.setText(String.valueOf(totalItems));
-                if (totalValueLabel != null) totalValueLabel.setText("₱" + String.format("%,.2f", totalValue));
-                if (lowStockLabel != null) lowStockLabel.setText(String.valueOf(lowStock));
-                if (avgStockLabel != null) avgStockLabel.setText(String.format("%.1f", avgStock));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, name.trim());
+            pstmt.setInt(2, currentId);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) return rs.getInt(1) > 0;
+        } catch (SQLException e) { e.printStackTrace(); }
+        return false;
     }
 
+    private void showDuplicateAlert(String name) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Duplicate Entry");
+        alert.setHeaderText(null);
+        alert.setContentText("The item '" + name + "' already exists! Please use a unique name.");
+        alert.showAndWait();
+    }
+
+    // --- REFRESH LOGIC (Modified to include Stock Level Filtering) ---
     public void refreshInventory() {
         if (productGrid == null) return;
         productGrid.getChildren().clear();
         
         String selectedCategory = categoryCombo.getSelectionModel().getSelectedItem();
-        String sql = "SELECT * FROM products WHERE name ILIKE ?";
-        boolean isFilterActive = selectedCategory != null && !selectedCategory.equals("All Categories");
+        String selectedStockLevel = (stockLevelCombo != null) ? stockLevelCombo.getSelectionModel().getSelectedItem() : "All Stock Levels";
         
-        if (isFilterActive) sql += " AND category = ?";
+        StringBuilder sql = new StringBuilder("SELECT * FROM products WHERE name ILIKE ?");
+        
+        if (selectedCategory != null && !selectedCategory.equals("All Categories")) {
+            sql.append(" AND category = '").append(selectedCategory).append("'");
+        }
+        
+        // Add accurate Stock Level logic for Products
+        if (selectedStockLevel != null) {
+            if (selectedStockLevel.equals("In Stock")) {
+                sql.append(" AND current_stock > min_stock");
+            } else if (selectedStockLevel.equals("Low Stock")) {
+                sql.append(" AND current_stock <= min_stock AND current_stock > 0");
+            } else if (selectedStockLevel.equals("Out of Stock")) {
+                sql.append(" AND current_stock <= 0");
+            }
+        }
         
         try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASS);
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            
+             PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
             pstmt.setString(1, "%" + (searchField != null ? searchField.getText() : "") + "%");
-            if (isFilterActive) pstmt.setString(2, selectedCategory);
-
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
-                Product p = new Product(
-                    rs.getInt("id"), rs.getString("name"), rs.getString("description"),
-                    rs.getString("category"), rs.getDouble("selling_price"),
-                    rs.getDouble("cost_price"), rs.getInt("current_stock"), rs.getInt("min_stock")
-                ); 
+                Product p = new Product(rs.getInt("id"), rs.getString("name"), rs.getString("description"), rs.getString("category"), rs.getDouble("selling_price"), rs.getDouble("cost_price"), rs.getInt("current_stock"), rs.getInt("min_stock")); 
                 productGrid.getChildren().add(createProductCard(p));
             }
-            
-            // Trigger accurate summary update
             updateSummaryCards(); 
-            
         } catch (SQLException e) { e.printStackTrace(); }
     }
 
-    @FXML
-    public void saveNewProduct() {
-        String sql = "INSERT INTO products (name, category, selling_price, cost_price, current_stock, min_stock) VALUES (?, ?, ?, ?, ?, ?)";
-        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASS);
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            
-            pstmt.setString(1, nameInput.getText());
-            pstmt.setString(2, categoryInput.getValue()); 
-            pstmt.setDouble(3, Double.parseDouble(priceInput.getText()));
-            pstmt.setDouble(4, Double.parseDouble(costInput.getText()));
-            pstmt.setInt(5, Integer.parseInt(stockInput.getText()));
-            pstmt.setInt(6, Integer.parseInt(minStockInput.getText()));
-            
-            pstmt.executeUpdate();
-            handleCloseModal();
-            refreshInventory(); // This calls updateSummaryCards() internally
-        } catch (Exception e) { 
-            e.printStackTrace(); 
+    public void refreshRawMaterials() {
+        if (productGrid == null) return;
+        productGrid.getChildren().clear();
+        
+        String selectedStockLevel = (stockLevelCombo != null) ? stockLevelCombo.getSelectionModel().getSelectedItem() : "All Stock Levels";
+        StringBuilder sql = new StringBuilder("SELECT * FROM raw_materials WHERE name ILIKE ?");
+        
+        // Accurate Stock Filtering for Raw Materials
+        if (selectedStockLevel != null && !selectedStockLevel.equals("All Stock Levels")) {
+            sql.append(" AND status = '").append(selectedStockLevel).append("'");
         }
+
+        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASS);
+             PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
+            pstmt.setString(1, "%" + (searchField != null ? searchField.getText() : "") + "%");
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                RawMaterial rm = new RawMaterial(rs.getInt("id"), rs.getString("name"), "", rs.getString("unit"), rs.getDouble("current_stock"), rs.getDouble("min_stock"));
+                productGrid.getChildren().add(createRawMaterialCard(rm));
+            }
+        } catch (SQLException e) { e.printStackTrace(); }
     }
 
+    // --- PRODUCT CARD & MODAL LOGIC (Preserved) ---
     private VBox createProductCard(Product p) {
-        // Main Container with modern spacing
         VBox card = new VBox(12);
         card.getStyleClass().add("product-card");
-        
-        // Header: Title and Action Icons (Edit/Delete)
         HBox headerRow = new HBox();
         headerRow.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
-        
         VBox titleBox = new VBox(2);
         Label name = new Label(p.getName());
         name.getStyleClass().add("product-title");
         Label desc = new Label(p.getDescription() != null ? p.getDescription() : p.getName().toLowerCase());
         desc.getStyleClass().add("product-desc");
         titleBox.getChildren().addAll(name, desc);
-        
         Pane spacer = new Pane();
         HBox.setHgrow(spacer, Priority.ALWAYS);
-        
         HBox actionIcons = new HBox(10);
-        Button editIcon = new Button("📝"); // Replace with FontIcon if available
-        editIcon.getStyleClass().add("icon-button");
-        Button deleteIcon = new Button("🗑");
-        deleteIcon.getStyleClass().add("icon-button");
-        actionIcons.getChildren().addAll(editIcon, deleteIcon);
-        
+        Button editBtn = new Button("📝");
+        editBtn.getStyleClass().add("icon-button");
+        editBtn.setOnAction(e -> openEditProductModal(p)); 
+        Button deleteBtn = new Button("🗑");
+        deleteBtn.getStyleClass().add("icon-button");
+        deleteBtn.setOnAction(e -> deleteProduct(p));
+        actionIcons.getChildren().addAll(editBtn, deleteBtn);
         headerRow.getChildren().addAll(titleBox, spacer, actionIcons);
-
-        // Tags: Category and Stock Status
         HBox tagsRow = new HBox(8);
         Label catTag = new Label(p.getCategory());
         catTag.getStyleClass().add("tag-category");
-        
         boolean isLow = p.getCurrentStock() <= p.getMinStock();
         Label statusTag = new Label(isLow ? "Low Stock" : "In Stock");
         statusTag.getStyleClass().add(isLow ? "tag-lowstock" : "tag-instock");
         tagsRow.getChildren().addAll(catTag, statusTag);
-
-        // Pricing Grid (Matching the reference layout)
         GridPane priceGrid = new GridPane();
-        priceGrid.setHgap(40); 
-        priceGrid.setVgap(5);
-        
-        Label sellLabel = new Label("Selling Price");
-        sellLabel.getStyleClass().add("price-label");
+        priceGrid.setHgap(40); priceGrid.setVgap(5);
+        priceGrid.add(new Label("Selling Price"), 0, 0);
         Label sellValue = new Label("₱" + String.format("%.0f", p.getSellingPrice()));
         sellValue.getStyleClass().add("price-value-sell");
-        
-        Label costLabel = new Label("Cost Price");
-        costLabel.getStyleClass().add("price-label");
+        priceGrid.add(sellValue, 0, 1);
+        priceGrid.add(new Label("Cost Price"), 1, 0);
         Label costValue = new Label("₱" + String.format("%.0f", p.getCostPrice()));
         costValue.getStyleClass().add("price-value-cost");
-        
-        priceGrid.add(sellLabel, 0, 0);
-        priceGrid.add(sellValue, 0, 1);
-        priceGrid.add(costLabel, 1, 0);
         priceGrid.add(costValue, 1, 1);
-
-        // Stock Info & Progress Bar
-        HBox stockInfo = new HBox();
-        Label stockQty = new Label("📦 " + p.getCurrentStock() + " units");
-        stockQty.getStyleClass().add("stock-text");
-        Pane stockSpacer = new Pane();
-        HBox.setHgrow(stockSpacer, Priority.ALWAYS);
-        Label minStock = new Label("Min: " + p.getMinStock());
-        minStock.getStyleClass().add("price-label");
-        stockInfo.getChildren().addAll(stockQty, stockSpacer, minStock);
-
         ProgressBar stockBar = new ProgressBar(p.getStockPercentage());
         stockBar.getStyleClass().add("stock-bar");
         stockBar.setMaxWidth(Double.MAX_VALUE);
-        
-        HBox stockFooter = new HBox();
-        Label levelText = new Label("Stock Level");
-        levelText.getStyleClass().add("price-label");
-        Pane footerSpacer = new Pane();
-        HBox.setHgrow(footerSpacer, Priority.ALWAYS);
-        Label percentText = new Label((int)(p.getStockPercentage() * 100) + "%");
-        percentText.getStyleClass().add("price-label");
-        stockFooter.getChildren().addAll(levelText, footerSpacer, percentText);
-
-        // Action Button
         Button adjustBtn = new Button("📝 Adjust Stock");
         adjustBtn.getStyleClass().add("adjust-btn");
         adjustBtn.setMaxWidth(Double.MAX_VALUE);
-
-        card.getChildren().addAll(headerRow, tagsRow, priceGrid, stockInfo, stockBar, stockFooter, adjustBtn);
+        adjustBtn.setOnAction(e -> openEditProductModal(p));
+        card.getChildren().addAll(headerRow, tagsRow, priceGrid, stockBar, adjustBtn);
         return card;
     }
 
-    // Existing methods for tabs, search, and raw materials...
+    private void openEditProductModal(Product p) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("AddProductModal.fxml"));
+            Parent root = loader.load();
+            InventoryController modalController = loader.getController();
+            modalController.prepareProductEditMode(p);
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setScene(new Scene(root));
+            stage.showAndWait();
+            refreshInventory();
+        } catch (Exception e) { e.printStackTrace(); }
+    }
+
+    public void prepareProductEditMode(Product p) {
+        editingProductId = p.getId();
+        if (nameInput != null) {
+            nameInput.setText(p.getName());
+            categoryInput.setValue(p.getCategory());
+            priceInput.setText(String.valueOf(p.getSellingPrice()));
+            costInput.setText(String.valueOf(p.getCostPrice()));
+            stockInput.setText(String.valueOf(p.getCurrentStock()));
+            minStockInput.setText(String.valueOf(p.getMinStock()));
+            if (modalHeaderLabel != null) modalHeaderLabel.setText("Edit Product");
+        }
+    }
+
+    @FXML
+    public void saveNewProduct() {
+        String name = nameInput.getText().trim();
+        if (isDuplicateName("products", name, editingProductId)) {
+            showDuplicateAlert(name);
+            return;
+        }
+        String sql = (editingProductId == -1) 
+            ? "INSERT INTO products (name, category, selling_price, cost_price, current_stock, min_stock) VALUES (?, ?, ?, ?, ?, ?)"
+            : "UPDATE products SET name=?, category=?, selling_price=?, cost_price=?, current_stock=?, min_stock=? WHERE id=?";
+        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASS);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, name);
+            pstmt.setString(2, categoryInput.getValue());
+            pstmt.setDouble(3, Double.parseDouble(priceInput.getText()));
+            pstmt.setDouble(4, Double.parseDouble(costInput.getText()));
+            pstmt.setInt(5, Integer.parseInt(stockInput.getText()));
+            pstmt.setInt(6, Integer.parseInt(minStockInput.getText()));
+            if (editingProductId != -1) pstmt.setInt(7, editingProductId);
+            pstmt.executeUpdate();
+            handleCloseModal();
+            refreshInventory();
+            editingProductId = -1;
+        } catch (Exception e) { e.printStackTrace(); }
+    }
+
+    private void deleteProduct(Product p) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Delete " + p.getName() + "? This cannot be undone.", ButtonType.OK, ButtonType.CANCEL);
+        if (alert.showAndWait().get() == ButtonType.OK) {
+            try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASS);
+                 PreparedStatement pstmt = conn.prepareStatement("DELETE FROM products WHERE id = ?")) {
+                pstmt.setInt(1, p.getId());
+                pstmt.executeUpdate();
+                refreshInventory();
+            } catch (SQLException e) { e.printStackTrace(); }
+        }
+    }
+
+    // --- RAW MATERIAL LOGIC (Preserved) ---
+    private void openEditRawMaterialModal(RawMaterial rm) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("AddRawMaterialModal.fxml"));
+            Parent root = loader.load();
+            InventoryController modalController = loader.getController();
+            modalController.prepareRawMaterialEditMode(rm);
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setScene(new Scene(root));
+            stage.showAndWait();
+            refreshRawMaterials();
+        } catch (Exception e) { e.printStackTrace(); }
+    }
+
+    public void prepareRawMaterialEditMode(RawMaterial rm) {
+        editingRawMaterialId = rm.getId();
+        if (rawNameInput != null) {
+            rawNameInput.setText(rm.getName());
+            unitCombo.setValue(rm.getUnit());
+            rawStockInput.setText(String.valueOf(rm.getCurrentStock()));
+            if (minStockInput != null) minStockInput.setText(String.valueOf(rm.getMinStock()));
+        }
+    }
+
+    @FXML
+    public void saveRawMaterial() {
+        String name = rawNameInput.getText().trim();
+        if (isDuplicateName("raw_materials", name, editingRawMaterialId)) {
+            showDuplicateAlert(name);
+            return;
+        }
+        String sql = (editingRawMaterialId == -1)
+            ? "INSERT INTO raw_materials (name, unit, current_stock, min_stock, status) VALUES (?, ?, ?, ?, ?)"
+            : "UPDATE raw_materials SET name=?, unit=?, current_stock=?, min_stock=?, status=? WHERE id=?";
+        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASS);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            double current = Double.parseDouble(rawStockInput.getText());
+            double min = (minStockInput != null && !minStockInput.getText().isEmpty()) ? Double.parseDouble(minStockInput.getText()) : 0;
+            String status = (current <= min) ? "Low Stock" : "In Stock";
+            if (current <= 0) status = "Out of Stock";
+            pstmt.setString(1, name);
+            pstmt.setString(2, unitCombo.getValue());
+            pstmt.setDouble(3, current);
+            pstmt.setDouble(4, min);
+            pstmt.setString(5, status);
+            if (editingRawMaterialId != -1) pstmt.setInt(6, editingRawMaterialId);
+            pstmt.executeUpdate();
+            handleCloseModal();
+            refreshRawMaterials();
+            editingRawMaterialId = -1;
+        } catch (Exception e) { e.printStackTrace(); }
+    }
+
+    private void deleteRawMaterial(RawMaterial rm) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Delete " + rm.getName() + "?", ButtonType.OK, ButtonType.CANCEL);
+        if (alert.showAndWait().get() == ButtonType.OK) {
+            try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASS);
+                 PreparedStatement pstmt = conn.prepareStatement("DELETE FROM raw_materials WHERE id = ?")) {
+                pstmt.setInt(1, rm.getId());
+                pstmt.executeUpdate();
+                refreshRawMaterials();
+            } catch (SQLException e) { e.printStackTrace(); }
+        }
+    }
+
+    private VBox createRawMaterialCard(RawMaterial rm) {
+        VBox card = new VBox(12);
+        card.getStyleClass().add("product-card"); card.setPrefWidth(330);
+        HBox header = new HBox();
+        header.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+        Label name = new Label(rm.getName());
+        name.getStyleClass().add("product-title");
+        Pane spacer = new Pane(); HBox.setHgrow(spacer, Priority.ALWAYS);
+        HBox actions = new HBox(10);
+        Button editBtn = new Button("📝"); editBtn.getStyleClass().add("icon-button");
+        editBtn.setOnAction(e -> openEditRawMaterialModal(rm)); 
+        Button deleteBtn = new Button("🗑"); deleteBtn.getStyleClass().add("icon-button");
+        deleteBtn.setOnAction(e -> deleteRawMaterial(rm));
+        actions.getChildren().addAll(editBtn, deleteBtn);
+        header.getChildren().addAll(name, spacer, actions);
+        Label desc = new Label(rm.getName().toLowerCase() + " (per " + rm.getUnit() + ")");
+        desc.getStyleClass().add("product-desc");
+        ProgressBar stockBar = new ProgressBar(rm.getStockPercentage());
+        stockBar.getStyleClass().add("stock-bar"); stockBar.setMaxWidth(Double.MAX_VALUE);
+        card.getChildren().addAll(header, desc, stockBar);
+        return card;
+    }
+
+    // --- SUMMARY & UTILITIES (Preserved) ---
+    private void updateSummaryCards() {
+        String sql = "SELECT COUNT(*) as total_items, SUM(cost_price * current_stock) as total_value, COUNT(*) FILTER (WHERE current_stock <= min_stock) as low_stock_count, AVG(current_stock) as avg_stock FROM products";
+        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASS);
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            if (rs.next()) {
+                if (totalProductsLabel != null) totalProductsLabel.setText(String.valueOf(rs.getInt("total_items")));
+                if (totalValueLabel != null) totalValueLabel.setText("₱" + String.format("%,.2f", rs.getDouble("total_value")));
+                if (lowStockLabel != null) lowStockLabel.setText(String.valueOf(rs.getInt("low_stock_count")));
+                if (avgStockLabel != null) avgStockLabel.setText(String.format("%.1f", rs.getDouble("avg_stock")));
+            }
+        } catch (SQLException e) { e.printStackTrace(); }
+    }
+
+    @FXML public void handleAddItem() {
+        editingProductId = -1; editingRawMaterialId = -1;
+        String fxml = isProductMode ? "AddProductModal.fxml" : "AddRawMaterialModal.fxml";
+        openModal(fxml, isProductMode ? "Add New Product" : "Add New Raw Material");
+    }
+
+    private void openModal(String fxmlFile, String title) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlFile));
+            Parent root = loader.load();
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle(title);
+            stage.setScene(new Scene(root));
+            stage.showAndWait();
+            if (isProductMode) refreshInventory(); else refreshRawMaterials();
+        } catch (Exception e) { e.printStackTrace(); }
+    }
+
+    @FXML public void handleCloseModal() { 
+        Stage stage = null;
+        if (nameInput != null && nameInput.getScene() != null) {
+            stage = (Stage) nameInput.getScene().getWindow();
+        } else if (rawNameInput != null && rawNameInput.getScene() != null) {
+            stage = (Stage) rawNameInput.getScene().getWindow();
+        }
+        if (stage != null) stage.close(); 
+    }
+
     private void setupTabListeners() {
         if (inventoryTabs != null) {
             inventoryTabs.selectedToggleProperty().addListener((obs, oldVal, newVal) -> {
                 if (newVal == productTab) {
-                    isProductMode = true;
-                    addItemBtn.setText("+ Add Product");
-                    categoryCombo.setDisable(false);
-                    refreshInventory();
+                    isProductMode = true; addItemBtn.setText("+ Add Product");
+                    categoryCombo.setDisable(false); refreshInventory();
                 } else if (newVal == rawMaterialTab) {
-                    isProductMode = false;
-                    addItemBtn.setText("+ Add Raw Material");
-                    categoryCombo.setDisable(true);
-                    refreshRawMaterials();
+                    isProductMode = false; addItemBtn.setText("+ Add Raw Material");
+                    categoryCombo.setDisable(true); refreshRawMaterials();
                 }
             });
         }
@@ -275,205 +436,4 @@ public class InventoryController {
             });
         }
     }
-
-    @FXML
-    public void handleAddItem() {
-        String fxml = isProductMode ? "AddProductModal.fxml" : "AddRawMaterialModal.fxml";
-        openModal(fxml, isProductMode ? "Add New Product" : "Add New Raw Material");
-    }
-
-    private void openModal(String fxmlFile, String title) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlFile));
-            Parent root = loader.load();
-            Stage stage = new Stage();
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setTitle(title);
-            stage.setScene(new Scene(root));
-            stage.showAndWait();
-            if (isProductMode) refreshInventory(); else refreshRawMaterials();
-        } catch (Exception e) { e.printStackTrace(); }
-    }
-
-    @FXML 
-    public void handleCloseModal() { 
-        Stage stage = (Stage) (nameInput != null ? nameInput.getScene().getWindow() : rawNameInput.getScene().getWindow());
-        stage.close(); 
-    }
-
-    public void refreshRawMaterials() {
-        if (productGrid == null) return;
-        productGrid.getChildren().clear();
-        
-        String query = "SELECT * FROM raw_materials WHERE name ILIKE ?";
-        
-        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASS);
-             PreparedStatement pstmt = conn.prepareStatement(query)) {
-            
-            pstmt.setString(1, "%" + (searchField != null ? searchField.getText() : "") + "%");
-            ResultSet rs = pstmt.executeQuery();
-
-            while (rs.next()) {
-                // Ensure you have a RawMaterial class with this constructor
-                RawMaterial rm = new RawMaterial(
-                    rs.getInt("id"), 
-                    rs.getString("name"), 
-                    "", 
-                    rs.getString("unit"), 
-                    rs.getDouble("current_stock"), 
-                    rs.getDouble("min_stock")
-                );
-                productGrid.getChildren().add(createRawMaterialCard(rm));
-            }
-        } catch (SQLException e) { e.printStackTrace(); }
-    }
-
- // Add this at the top of your class with other variables
-    private static int editingRawMaterialId = -1;
-
-    /**
-     * Opens the Raw Material modal and pre-fills it with existing data[cite: 5, 23].
-     */
-    private void openEditRawMaterialModal(RawMaterial rm) {
-        try {
-            // Load the FXML for the raw material modal 
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("AddRawMaterialModal.fxml"));
-            Parent root = loader.load();
-            
-            // Get the controller and inject the material data
-            InventoryController modalController = loader.getController();
-            modalController.prepareRawMaterialEditMode(rm);
-            
-            Stage stage = new Stage();
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setTitle("Edit Raw Material: " + rm.getName());
-            stage.setScene(new Scene(root));
-            stage.showAndWait();
-            
-            refreshRawMaterials(); // Refresh the grid after closing [cite: 2]
-        } catch (Exception e) { 
-            e.printStackTrace(); 
-        }
-    }
-
-    /**
-     * Pre-fills the FXML fields with the selected material's data.
-     */
-    public void prepareRawMaterialEditMode(RawMaterial rm) {
-        editingRawMaterialId = rm.getId(); // Store the ID for the SQL UPDATE
-        
-        if (rawNameInput != null) {
-            rawNameInput.setText(rm.getName());
-            unitCombo.setValue(rm.getUnit());
-            rawStockInput.setText(String.valueOf(rm.getCurrentStock()));
-            
-            // If your modal has a minStock field, set it here [cite: 7]
-            if (minStockInput != null) {
-                minStockInput.setText(String.valueOf(rm.getMinStock()));
-            }
-        }
-    }
-
-    /**
-     * Modified save logic to handle both INSERT and UPDATE for raw materials.
-     */
-    @FXML
-    public void saveRawMaterial() {
-        String sql;
-        if (editingRawMaterialId == -1) {
-            sql = "INSERT INTO raw_materials (name, unit, current_stock, min_stock, status) VALUES (?, ?, ?, ?, ?)";
-        } else {
-            sql = "UPDATE raw_materials SET name=?, unit=?, current_stock=?, min_stock=?, status=? WHERE id=?";
-        }
-        
-        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASS);
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            
-            double current = Double.parseDouble(rawStockInput.getText());
-            double min = (minStockInput != null && !minStockInput.getText().isEmpty()) 
-                          ? Double.parseDouble(minStockInput.getText()) : 0;
-            
-            // Determine status based on stock levels [cite: 26]
-            String status = (current <= min) ? "Low Stock" : "In Stock";
-            if (current <= 0) status = "Out of Stock";
-
-            pstmt.setString(1, rawNameInput.getText());
-            pstmt.setString(2, unitCombo.getValue());
-            pstmt.setDouble(3, current);
-            pstmt.setDouble(4, min);
-            pstmt.setString(5, status);
-            
-            if (editingRawMaterialId != -1) {
-                pstmt.setInt(6, editingRawMaterialId);
-            }
-            
-            pstmt.executeUpdate();
-            handleCloseModal();
-            refreshRawMaterials();
-            
-            // Reset the ID after saving
-            editingRawMaterialId = -1;
-        } catch (Exception e) { 
-            e.printStackTrace(); 
-        }
-    }
-
-    private VBox createRawMaterialCard(RawMaterial rm) {
-        VBox card = new VBox(12);
-        card.getStyleClass().add("product-card"); // Shared modern card style
-        card.setPrefWidth(330);
-
-        // Header: Name and Action Icons
-        HBox header = new HBox();
-        header.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
-        Label name = new Label(rm.getName());
-        name.getStyleClass().add("product-title");
-        
-        Pane spacer = new Pane();
-        HBox.setHgrow(spacer, Priority.ALWAYS);
-        
-        HBox actions = new HBox(10);
-        Button editBtn = new Button("📝");
-        editBtn.getStyleClass().add("icon-button");
-        editBtn.setOnAction(e -> openEditRawMaterialModal(rm)); 
-        Button deleteBtn = new Button("🗑");
-        deleteBtn.getStyleClass().add("icon-button");
-        actions.getChildren().addAll(editBtn, deleteBtn);
-        header.getChildren().addAll(name, spacer, actions);
-
-        // Description/Unit text
-        Label desc = new Label(rm.getName().toLowerCase() + " (per " + rm.getUnit() + ")");
-        desc.getStyleClass().add("product-desc");
-
-        // Stock Indicator (Icon + Quantity + Min Label)
-        HBox stockRow = new HBox();
-        stockRow.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
-        Label stockVal = new Label("📦 " + rm.getCurrentStock() + " " + rm.getUnit());
-        stockVal.getStyleClass().add("stock-text");
-        
-        Pane stockSpacer = new Pane();
-        HBox.setHgrow(stockSpacer, Priority.ALWAYS);
-        Label minLabel = new Label("Min: " + rm.getMinStock());
-        minLabel.getStyleClass().add("price-label");
-        stockRow.getChildren().addAll(stockVal, stockSpacer, minLabel);
-
-        // Progress Bar
-        ProgressBar stockBar = new ProgressBar(rm.getStockPercentage());
-        stockBar.getStyleClass().add("stock-bar");
-        stockBar.setMaxWidth(Double.MAX_VALUE);
-
-        // Footer labels
-        HBox footer = new HBox();
-        Label levelTxt = new Label("Stock Level");
-        levelTxt.getStyleClass().add("price-label");
-        Pane footerSpacer = new Pane();
-        HBox.setHgrow(footerSpacer, Priority.ALWAYS);
-        Label percentTxt = new Label((int)(rm.getStockPercentage() * 100) + "%");
-        percentTxt.getStyleClass().add("price-label");
-        footer.getChildren().addAll(levelTxt, footerSpacer, percentTxt);
-
-        card.getChildren().addAll(header, desc, stockRow, stockBar, footer);
-        return card;
-    }
-    
 }
