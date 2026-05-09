@@ -13,9 +13,10 @@ import java.sql.*;
 public class InventoryController {
 
 	// SUPABASE CLOUD CONNECTION
-	private static final String DB_URL = "jdbc:postgresql://db.gwjmqejlljupondbzbs.supabase.co:5432/postgres?sslmode=require";
-    private static final String DB_USER = "postgres";
-    private static final String DB_PASS = "Loritastecafe2026"; // Delete this text and type your actual Supabase password; 
+		// 1. Add 'jdbc:' to the start and use port 6543 for the pooler
+		private static final String DB_URL = "jdbc:postgresql://aws-1-ap-southeast-1.pooler.supabase.com:6543/postgres?sslmode=require";
+		private static final String DB_USER = "postgres.gwjmqejllljupondbzbs";
+		private static final String DB_PASS = "Loritastecafe2026"; 
 
     @FXML private FlowPane productGrid;
     @FXML private ToggleGroup inventoryTabs;
