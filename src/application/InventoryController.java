@@ -43,7 +43,7 @@ public class InventoryController {
 
     private final String[] CATEGORIES = {
         "Milktea", "Cream Cheese", "Iced Coffee", 
-        "Latte Series", "Hot Drinks", "Refreshers", "Meals"
+        "Latte Series", "Hot Drinks", "Refreshers", "Meals", "Coffee"
     };
 
     @FXML

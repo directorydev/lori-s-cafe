@@ -9,13 +9,9 @@ import java.sql.*;
 
 public class LoginController {
 
-
-	// SUPABASE CLOUD CONNECTION
-	// 1. Add 'jdbc:' to the start and use port 6543 for the pooler
 	private static final String DB_URL = "jdbc:postgresql://aws-1-ap-southeast-1.pooler.supabase.com:6543/postgres?sslmode=require";
 	private static final String DB_USER = "postgres.gwjmqejllljupondbzbs";
-	private static final String DB_PASS = "Loritastecafe2026"; 
-
+	private static final String DB_PASS = "Loritastecafe2026";
 
     @FXML private TextField usernameField;
     @FXML private PasswordField passwordField;

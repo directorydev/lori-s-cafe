@@ -3,68 +3,71 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox spacing="15.0" styleClass="main-bg" stylesheets="@application.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.InventoryController">
-   <children>
-      <Label fx:id="modalHeaderLabel" styleClass="header-title" text="Add New Product" />
-      
-      <TabPane tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+<VBox spacing="20" styleClass="form-container" stylesheets="@application.css" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.InventoryController">
+    <padding><Insets top="25" right="25" bottom="25" left="25"/></padding>
+
+    <HBox alignment="CENTER_LEFT">
+        <VBox spacing="5">
+            <Label fx:id="modalHeaderLabel" text="Add New Product" styleClass="header-title" />
+            <Label text="Enter product details and recipe requirements." styleClass="header-subtitle" />
+        </VBox>
+        <Region HBox.hgrow="ALWAYS" />
+        <Button text="✕" style="-fx-background-color: transparent; -fx-cursor: hand;" onAction="#handleCloseModal"/>
+    </HBox>
+
+    <TabPane tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
         <tabs>
-          <Tab text="Details">
-            <content>
-              <VBox spacing="15.0" style="-fx-padding: 20;">
-                 <children>
-                    <VBox spacing="5.0">
-                       <Label styleClass="input-label" text="Product Name" />
-                       <TextField fx:id="nameInput" promptText="Enter product name" styleClass="custom-input" />
+            <Tab text="Details">
+                <VBox spacing="15" style="-fx-padding: 20 5 0 5;">
+                    <VBox spacing="8">
+                        <Label text="Product Name" styleClass="input-label" />
+                        <TextField fx:id="nameInput" promptText="e.g., Caramel Macchiato" styleClass="custom-input" />
                     </VBox>
-
-                    <VBox spacing="5.0">
-                       <Label styleClass="input-label" text="Category" />
-                       <ComboBox fx:id="categoryInput" maxWidth="Infinity" promptText="Select Category" styleClass="custom-input" />
+                    <VBox spacing="8">
+                        <Label text="Category" styleClass="input-label" />
+                        <ComboBox fx:id="categoryInput" maxWidth="Infinity" styleClass="custom-input" />
                     </VBox>
-
-                    <HBox spacing="15.0">
-                       <VBox HBox.hgrow="ALWAYS">
-                          <Label styleClass="input-label" text="Selling Price (₱)" />
-                          <TextField fx:id="priceInput" promptText="0.00" styleClass="custom-input" />
-                       </VBox>
-                       <VBox HBox.hgrow="ALWAYS">
-                          <Label styleClass="input-label" text="Cost Price (₱)" />
-                          <TextField fx:id="costInput" promptText="0.00" styleClass="custom-input" />
-                       </VBox>
+                    <HBox spacing="15">
+                        <VBox HBox.hgrow="ALWAYS" spacing="8">
+                            <Label text="Price (₱)" styleClass="input-label" />
+                            <TextField fx:id="priceInput" text="0.00" styleClass="custom-input" />
+                        </VBox>
+                        <VBox HBox.hgrow="ALWAYS" spacing="8">
+                            <Label text="Cost (₱)" styleClass="input-label" />
+                            <TextField fx:id="costInput" text="0.00" styleClass="custom-input" />
+                        </VBox>
                     </HBox>
-
-                    <VBox spacing="5.0">
-                       <Label styleClass="input-label" text="Stock Management" />
-                       <HBox spacing="15.0">
-                          <TextField fx:id="stockInput" promptText="Current Stock" styleClass="custom-input" HBox.hgrow="ALWAYS" />
-                          <TextField fx:id="minStockInput" promptText="Min. Stock" styleClass="custom-input" HBox.hgrow="ALWAYS" />
-                       </HBox>
-                    </VBox>
-                 </children>
-              </VBox>
-            </content>
-          </Tab>
-
-          <Tab text="Ingredients">
-             <content>
-                <VBox spacing="10.0" style="-fx-padding: 20;">
-                   <Label styleClass="header-subtitle" text="Select raw materials and quantities..." />
-                   <ListView fx:id="ingredientSelectionList" prefHeight="200.0" />
+                    <HBox spacing="15">
+                        <VBox HBox.hgrow="ALWAYS" spacing="8">
+                            <Label text="Current Stock" styleClass="input-label" />
+                            <TextField fx:id="stockInput" text="0" styleClass="custom-input" />
+                        </VBox>
+                        <VBox HBox.hgrow="ALWAYS" spacing="8">
+                            <Label text="Min. Stock" styleClass="input-label" />
+                            <TextField fx:id="minStockInput" text="0" styleClass="custom-input" />
+                        </VBox>
+                    </HBox>
                 </VBox>
-             </content>
-          </Tab>
+            </Tab>
+            <Tab text="Ingredients">
+                <VBox spacing="15" style="-fx-padding: 20 5 0 5;">
+                    <Label text="Connect product to raw materials for inventory deduction." styleClass="header-subtitle"/>
+                    <TableView fx:id="ingredientTable" prefHeight="280" VBox.vgrow="ALWAYS" styleClass="ingredient-table">
+                        <columns>
+                            <TableColumn fx:id="colSelect" prefWidth="45" text="✔" />
+                            <TableColumn fx:id="colRawMaterial" prefWidth="180" text="Material" />
+                            <TableColumn fx:id="colUnit" prefWidth="100" text="Unit" />
+                            <TableColumn fx:id="colStock" prefWidth="120" text="Available" />
+                            <TableColumn fx:id="colUsage" prefWidth="100" text="Usage" />
+                        </columns>
+                    </TableView>
+                </VBox>
+            </Tab>
         </tabs>
-      </TabPane>
+    </TabPane>
 
-      <HBox alignment="CENTER_RIGHT" spacing="10.0">
-         <children>
-            <Button onAction="#handleCloseModal" styleClass="secondary-btn" text="Cancel" />
-            <Button onAction="#saveNewProduct" styleClass="primary-btn" text="Add Product" />
-         </children>
-      </HBox>
-   </children>
-   <padding>
-      <Insets bottom="25.0" left="25.0" right="25.0" top="25.0" />
-   </padding>
+    <HBox spacing="12" alignment="CENTER_RIGHT">
+        <Button text="Cancel" styleClass="secondary-btn" onAction="#handleCloseModal"/>
+        <Button text="Save Product" styleClass="primary-btn" onAction="#saveNewProduct"/>
+    </HBox>
 </VBox>

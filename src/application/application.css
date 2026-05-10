@@ -263,3 +263,80 @@
     -fx-cursor: hand;
     -fx-font-size: 14px;
 }
+
+/* --- INTERACTIVE SOFT UI THEME --- */
+.form-container {
+    -fx-background-color: #fcfbf9;
+    -fx-background-radius: 20;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 15, 0, 0, 5);
+}
+
+/* Interactive Inputs */
+.custom-input {
+    -fx-background-color: white;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-transition: 0.3s;
+}
+
+.custom-input:focused {
+    -fx-border-color: #2d3436;
+    -fx-effect: dropshadow(three-pass-box, rgba(45, 52, 54, 0.1), 8, 0, 0, 0);
+}
+
+/* Tab Interaction */
+.tab-pane .tab-header-area .tab {
+    -fx-background-color: #f1f2f6;
+    -fx-background-radius: 12 12 0 0;
+    -fx-padding: 12 35;
+    -fx-cursor: hand;
+}
+
+.tab-pane .tab:hover {
+    -fx-background-color: #e1e2e6;
+}
+
+.tab-pane .tab:selected {
+    -fx-background-color: white;
+    -fx-border-color: #2d3436;
+    -fx-border-width: 0 0 3 0; /* Modern bottom-border indicator */
+}
+
+/* Animated Buttons */
+.primary-btn {
+    -fx-background-color: #2d3436;
+    -fx-text-fill: white;
+    -fx-background-radius: 10;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.primary-btn:hover {
+    -fx-background-color: #1a1e1f;
+    -fx-scale-x: 1.03;
+    -fx-scale-y: 1.03;
+}
+
+.secondary-btn {
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: #dfe6e9;
+    -fx-border-radius: 10;
+    -fx-cursor: hand;
+}
+
+.secondary-btn:hover {
+    -fx-background-color: #eceff1;
+}
+
+/* Table Interaction */
+.ingredient-table {
+    -fx-background-color: white;
+    -fx-border-color: #f1f2f6;
+    -fx-border-radius: 10;
+}
+
+.ingredient-table .column-header {
+    -fx-background-color: #f8f9fa;
+    -fx-text-fill: #636e72;
+}
