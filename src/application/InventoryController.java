@@ -17,7 +17,7 @@ import java.sql.*;
 
 public class InventoryController {
 
-    private static final String DB_URL = "jdbc:postgresql://aws-1-ap-southeast-1.pooler.supabase.com:6543/postgres?sslmode=require";
+    private static final String DB_URL = "jdbc:postgresql://aws-1-ap-southeast-1.pooler.supabase.com:6543/postgres?sslmode=require&prepareThreshold=0";
     private static final String DB_USER = "postgres.gwjmqejllljupondbzbs";
     private static final String DB_PASS = "Loritastecafe2026"; 
 
@@ -163,38 +163,51 @@ public class InventoryController {
             return;
         }
 
-        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASS)) {
-            conn.setAutoCommit(false); 
-            try {
-                int productId = upsertProduct(conn, name);
-                
-                try (PreparedStatement del = conn.prepareStatement("DELETE FROM product_ingredients WHERE product_id = ?")) {
-                    del.setInt(1, productId);
-                    del.executeUpdate();
-                }
-                
-                String ins = "INSERT INTO product_ingredients (product_id, raw_material_id, quantity_required, usage_condition) VALUES (?, ?, ?, ?)";
-                try (PreparedStatement pstmt = conn.prepareStatement(ins)) {
-                    for (IngredientRow row : selectedIngs) {
-                        pstmt.setInt(1, productId);
-                        pstmt.setInt(2, row.getId());
-                        pstmt.setDouble(3, row.getUsage()); 
-                        pstmt.setString(4, "Always"); 
-                        pstmt.addBatch();
+        Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to save this product?", ButtonType.YES, ButtonType.NO);
+        confirmAlert.setTitle("Confirm Save");
+        confirmAlert.setHeaderText(null);
+        
+        if (confirmAlert.showAndWait().orElse(ButtonType.NO) == ButtonType.YES) {
+            try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASS)) {
+                conn.setAutoCommit(false); 
+                try {
+                    int productId = upsertProduct(conn, name);
+                    
+                    try (PreparedStatement del = conn.prepareStatement("DELETE FROM product_ingredients WHERE product_id = ?")) {
+                        del.setInt(1, productId);
+                        del.executeUpdate();
                     }
-                    pstmt.executeBatch();
-                }
+                    
+                    String ins = "INSERT INTO product_ingredients (product_id, raw_material_id, quantity_required, usage_condition) VALUES (?, ?, ?, ?)";
+                    try (PreparedStatement pstmt = conn.prepareStatement(ins)) {
+                        for (IngredientRow row : selectedIngs) {
+                            pstmt.setInt(1, productId);
+                            pstmt.setInt(2, row.getId());
+                            pstmt.setDouble(3, row.getUsage()); 
+                            pstmt.setString(4, "Always"); 
+                            pstmt.addBatch();
+                        }
+                        pstmt.executeBatch();
+                    }
 
-                conn.commit(); 
-                handleCloseModal();
-                refreshInventory();
-                editingProductId = -1;
-            } catch (SQLException e) {
-                conn.rollback(); 
-                e.printStackTrace();
-                showAlert("Database Error", "Failed to save product details. Changes rolled back.");
-            }
-        } catch (Exception e) { e.printStackTrace(); }
+                    conn.commit(); 
+                    handleCloseModal();
+                    refreshInventory();
+                    editingProductId = -1;
+
+                    Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
+                    successAlert.setTitle("Success");
+                    successAlert.setHeaderText(null);
+                    successAlert.setContentText("Product successfully saved to the database!");
+                    successAlert.showAndWait();
+
+                } catch (SQLException e) {
+                    conn.rollback(); 
+                    e.printStackTrace();
+                    showAlert("Database Error", "Failed to save product details. Changes rolled back.");
+                }
+            } catch (Exception e) { e.printStackTrace(); }
+        }
     }
 
     private int upsertProduct(Connection conn, String name) throws SQLException {
@@ -386,37 +399,81 @@ public class InventoryController {
     }
 
     private VBox createRawMaterialCard(RawMaterial rm) {
-        VBox card = new VBox(12);
+        VBox card = new VBox(15);
         card.setPrefWidth(320);
         card.setStyle("-fx-background-color: white; -fx-padding: 20; -fx-border-color: #e8e8e8; -fx-border-radius: 10; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 4);");
         
         String safeName = rm.getName() != null ? rm.getName() : "Unknown Material";
         String safeUnit = rm.getUnit() != null ? rm.getUnit() : "unit";
+        boolean isLow = rm.getCurrentStock() <= rm.getMinStock();
         
-        HBox header = new HBox();
-        header.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+        // --- Top Row: Title, Description, Actions ---
+        HBox headerRow = new HBox();
+        headerRow.setAlignment(javafx.geometry.Pos.TOP_LEFT);
+        
+        VBox titleBox = new VBox(5);
         Label name = new Label(safeName);
         name.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1a1a1a;");
+        Label desc = new Label(safeName.toLowerCase() + " (per " + safeUnit + ")");
+        desc.setStyle("-fx-font-size: 12px; -fx-text-fill: #737373;");
+        titleBox.getChildren().addAll(name, desc);
+        
         Pane spacer = new Pane(); HBox.setHgrow(spacer, Priority.ALWAYS);
-        HBox actions = new HBox(8);
+        
+        HBox actionIcons = new HBox(8);
         Button editBtn = new Button("📝"); 
         editBtn.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-padding: 0;");
         editBtn.setOnAction(e -> openEditRawMaterialModal(rm)); 
         Button deleteBtn = new Button("🗑"); 
         deleteBtn.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-padding: 0;");
         deleteBtn.setOnAction(e -> deleteRawMaterial(rm));
-        actions.getChildren().addAll(editBtn, deleteBtn);
-        header.getChildren().addAll(name, spacer, actions);
+        actionIcons.getChildren().addAll(editBtn, deleteBtn);
+        headerRow.getChildren().addAll(titleBox, spacer, actionIcons);
         
-        Label desc = new Label(safeName.toLowerCase() + " (per " + safeUnit + ")");
-        desc.setStyle("-fx-font-size: 12px; -fx-text-fill: #737373;");
+        // --- Stock Overview Row ---
+        HBox stockRow = new HBox();
+        stockRow.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
         
+        // Format stock without trailing zero if whole number
+        String stockDisplay = (rm.getCurrentStock() == Math.floor(rm.getCurrentStock())) ? 
+            String.format("%.0f", rm.getCurrentStock()) : String.valueOf(rm.getCurrentStock());
+            
+        Label unitsLabel = new Label("📦 " + stockDisplay + " " + safeUnit);
+        String stockColor = isLow ? "#c62828" : "#00c853";
+        unitsLabel.setStyle("-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: " + stockColor + ";");
+        
+        Pane stockSpacer = new Pane();
+        HBox.setHgrow(stockSpacer, Priority.ALWAYS);
+        
+        String minDisplay = (rm.getMinStock() == Math.floor(rm.getMinStock())) ? 
+            String.format("%.0f", rm.getMinStock()) : String.valueOf(rm.getMinStock());
+        Label minLabel = new Label("Min: " + minDisplay);
+        minLabel.setStyle("-fx-font-size: 11px; -fx-text-fill: #737373;");
+        stockRow.getChildren().addAll(unitsLabel, stockSpacer, minLabel);
+
+        // --- Progress Bar Section ---
+        VBox progressSection = new VBox(3);
         ProgressBar stockBar = new ProgressBar(rm.getStockPercentage());
         stockBar.setMaxWidth(Double.MAX_VALUE);
         stockBar.setPrefHeight(6);
-        stockBar.setStyle("-fx-accent: #00c853; -fx-control-inner-background: #f0f0f0;");
+        String barColor = isLow ? "#ef5350" : "#00c853";
+        stockBar.setStyle("-fx-accent: " + barColor + "; -fx-control-inner-background: #f0f0f0;");
         
-        card.getChildren().addAll(header, desc, stockBar);
+        HBox progressLabels = new HBox();
+        Label pLabel = new Label("Stock Level");
+        pLabel.setStyle("-fx-font-size: 10px; -fx-text-fill: #a0a0a0;");
+        Pane pSpacer = new Pane();
+        HBox.setHgrow(pSpacer, Priority.ALWAYS);
+        Label pValue = new Label(String.format("%.0f%%", rm.getStockPercentage() * 100));
+        pValue.setStyle("-fx-font-size: 10px; -fx-text-fill: #a0a0a0;");
+        progressLabels.getChildren().addAll(pLabel, pSpacer, pValue);
+        
+        progressSection.getChildren().addAll(stockBar, progressLabels);
+        
+        // Add padding to push the stock info down a bit like the image
+        VBox.setMargin(stockRow, new javafx.geometry.Insets(10, 0, 0, 0));
+
+        card.getChildren().addAll(headerRow, stockRow, progressSection);
         return card;
     }
 
@@ -432,28 +489,42 @@ public class InventoryController {
             showDuplicateAlert(name);
             return;
         }
-        String sql = (editingRawMaterialId == -1)
-            ? "INSERT INTO raw_materials (name, unit, current_stock, min_stock, status) VALUES (?, ?, ?, ?, ?)"
-            : "UPDATE raw_materials SET name=?, unit=?, current_stock=?, min_stock=?, status=? WHERE id=?";
-        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASS);
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            double current = parseDoubleSafe(rawStockInput.getText());
-            double min = parseDoubleSafe(minStockInput != null ? minStockInput.getText() : "0");
-            String status = (current <= min) ? (current <= 0 ? "Out of Stock" : "Low Stock") : "In Stock";
-            
-            pstmt.setString(1, name);
-            pstmt.setString(2, unitCombo.getValue() != null ? unitCombo.getValue() : "Pieces");
-            pstmt.setDouble(3, current);
-            pstmt.setDouble(4, min);
-            pstmt.setString(5, status);
-            
-            if (editingRawMaterialId != -1) pstmt.setInt(6, editingRawMaterialId);
-            pstmt.executeUpdate();
-            
-            handleCloseModal();
-            refreshRawMaterials();
-            editingRawMaterialId = -1;
-        } catch (Exception e) { e.printStackTrace(); }
+
+        Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to save this raw material?", ButtonType.YES, ButtonType.NO);
+        confirmAlert.setTitle("Confirm Save");
+        confirmAlert.setHeaderText(null);
+
+        if (confirmAlert.showAndWait().orElse(ButtonType.NO) == ButtonType.YES) {
+            String sql = (editingRawMaterialId == -1)
+                ? "INSERT INTO raw_materials (name, unit, current_stock, min_stock, status) VALUES (?, ?, ?, ?, ?)"
+                : "UPDATE raw_materials SET name=?, unit=?, current_stock=?, min_stock=?, status=? WHERE id=?";
+            try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASS);
+                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                double current = parseDoubleSafe(rawStockInput.getText());
+                double min = parseDoubleSafe(minStockInput != null ? minStockInput.getText() : "0");
+                String status = (current <= min) ? (current <= 0 ? "Out of Stock" : "Low Stock") : "In Stock";
+                
+                pstmt.setString(1, name);
+                pstmt.setString(2, unitCombo.getValue() != null ? unitCombo.getValue() : "Pieces");
+                pstmt.setDouble(3, current);
+                pstmt.setDouble(4, min);
+                pstmt.setString(5, status);
+                
+                if (editingRawMaterialId != -1) pstmt.setInt(6, editingRawMaterialId);
+                pstmt.executeUpdate();
+                
+                handleCloseModal();
+                refreshRawMaterials();
+                editingRawMaterialId = -1;
+
+                Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
+                successAlert.setTitle("Success");
+                successAlert.setHeaderText(null);
+                successAlert.setContentText("Raw material successfully saved to the database!");
+                successAlert.showAndWait();
+
+            } catch (Exception e) { e.printStackTrace(); }
+        }
     }
 
     private void updateSummaryCards() {
