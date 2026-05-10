@@ -4,21 +4,21 @@
 <?import javafx.scene.layout.*?>
 
 <VBox spacing="20" styleClass="form-container" stylesheets="@application.css" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.InventoryController">
-    <padding><Insets top="25" right="25" bottom="25" left="25"/></padding>
+    <padding><Insets top="30" right="30" bottom="30" left="30"/></padding>
 
     <HBox alignment="CENTER_LEFT">
-        <VBox spacing="5">
+        <VBox spacing="5.0">
             <Label fx:id="modalHeaderLabel" text="Add New Product" styleClass="header-title" />
             <Label text="Enter product details and recipe requirements." styleClass="header-subtitle" />
         </VBox>
-        <Region HBox.hgrow="ALWAYS" />
-        <Button text="✕" style="-fx-background-color: transparent; -fx-cursor: hand;" onAction="#handleCloseModal"/>
     </HBox>
 
-    <TabPane tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+    <Separator style="-fx-background-color: transparent; -fx-border-color: #e5e7eb; -fx-border-width: 0 0 1 0;" />
+
+    <TabPane tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS" style="-fx-background-color: transparent;">
         <tabs>
-            <Tab text="Details">
-                <VBox spacing="15" style="-fx-padding: 20 5 0 5;">
+            <Tab text="Product Details">
+                <VBox spacing="18" style="-fx-padding: 25 5 0 5;">
                     <VBox spacing="8">
                         <Label text="Product Name" styleClass="input-label" />
                         <TextField fx:id="nameInput" promptText="e.g., Caramel Macchiato" styleClass="custom-input" />
@@ -49,16 +49,16 @@
                     </HBox>
                 </VBox>
             </Tab>
-            <Tab text="Ingredients">
-                <VBox spacing="15" style="-fx-padding: 20 5 0 5;">
+            <Tab text="Recipe &amp; Ingredients">
+                <VBox spacing="15" style="-fx-padding: 25 5 0 5;">
                     <Label text="Connect product to raw materials for inventory deduction." styleClass="header-subtitle"/>
-                    <TableView fx:id="ingredientTable" prefHeight="280" VBox.vgrow="ALWAYS" styleClass="ingredient-table">
+                    <TableView fx:id="ingredientTable" prefHeight="260" VBox.vgrow="ALWAYS" styleClass="clean-table">
                         <columns>
-                            <TableColumn fx:id="colSelect" prefWidth="45" text="✔" />
-                            <TableColumn fx:id="colRawMaterial" prefWidth="180" text="Material" />
-                            <TableColumn fx:id="colUnit" prefWidth="100" text="Unit" />
-                            <TableColumn fx:id="colStock" prefWidth="120" text="Available" />
-                            <TableColumn fx:id="colUsage" prefWidth="100" text="Usage" />
+                            <TableColumn fx:id="colSelect" prefWidth="45" text="✔" reorderable="false" />
+                            <TableColumn fx:id="colRawMaterial" prefWidth="180" text="Material" reorderable="false" />
+                            <TableColumn fx:id="colUnit" prefWidth="100" text="Unit" reorderable="false" />
+                            <TableColumn fx:id="colStock" prefWidth="120" text="Available" reorderable="false" />
+                            <TableColumn fx:id="colUsage" prefWidth="100" text="Usage" reorderable="false" />
                         </columns>
                     </TableView>
                 </VBox>
@@ -66,7 +66,8 @@
         </tabs>
     </TabPane>
 
-    <HBox spacing="12" alignment="CENTER_RIGHT">
+    <Separator style="-fx-background-color: transparent; -fx-border-color: #e5e7eb; -fx-border-width: 0 0 1 0;" />
+    <HBox spacing="12" alignment="CENTER_RIGHT" style="-fx-padding: 10 0 0 0;">
         <Button text="Cancel" styleClass="secondary-btn" onAction="#handleCloseModal"/>
         <Button text="Save Product" styleClass="primary-btn" onAction="#saveNewProduct"/>
     </HBox>
