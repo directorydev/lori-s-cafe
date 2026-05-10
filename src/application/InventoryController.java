@@ -65,6 +65,8 @@ public class InventoryController {
         
         if (ingredientTable != null) setupIngredientTable();
         if (productGrid != null) {
+            productGrid.setHgap(15);
+            productGrid.setVgap(15);
             if (isProductMode) refreshInventory(); else refreshRawMaterials();
         }
     }
@@ -144,7 +146,12 @@ public class InventoryController {
 
     @FXML
     public void saveNewProduct() {
-        String name = nameInput.getText().trim();
+        String name = nameInput.getText() != null ? nameInput.getText().trim() : "";
+        if (name.isEmpty()) {
+            showAlert("Validation Error", "Product name cannot be empty.");
+            return;
+        }
+        
         if (isDuplicateName("products", name, editingProductId)) {
             showDuplicateAlert(name);
             return;
@@ -159,22 +166,19 @@ public class InventoryController {
         try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASS)) {
             conn.setAutoCommit(false); 
             try {
-                // 1. UPDATE PRODUCT TABLE: Saves main details (price, cost, stock, etc.) to 'products' table
                 int productId = upsertProduct(conn, name);
                 
-                // 2. CLEAR PREVIOUS INGREDIENTS: Cleans up the relational table to avoid duplicates
                 try (PreparedStatement del = conn.prepareStatement("DELETE FROM product_ingredients WHERE product_id = ?")) {
                     del.setInt(1, productId);
                     del.executeUpdate();
                 }
                 
-                // 3. UPDATE PRODUCT_INGREDIENTS: Links ingredients with user-inputted Usage
                 String ins = "INSERT INTO product_ingredients (product_id, raw_material_id, quantity_required, usage_condition) VALUES (?, ?, ?, ?)";
                 try (PreparedStatement pstmt = conn.prepareStatement(ins)) {
                     for (IngredientRow row : selectedIngs) {
                         pstmt.setInt(1, productId);
                         pstmt.setInt(2, row.getId());
-                        pstmt.setDouble(3, row.getUsage()); // User-entered usage amount saved to quantity_required
+                        pstmt.setDouble(3, row.getUsage()); 
                         pstmt.setString(4, "Always"); 
                         pstmt.addBatch();
                     }
@@ -194,18 +198,20 @@ public class InventoryController {
     }
 
     private int upsertProduct(Connection conn, String name) throws SQLException {
-        // Matches the columns seen in your Supabase 'products' table
         String sql = (editingProductId == -1) 
             ? "INSERT INTO products (name, category, selling_price, cost_price, current_stock, min_stock) VALUES (?, ?, ?, ?, ?, ?) RETURNING id"
             : "UPDATE products SET name=?, category=?, selling_price=?, cost_price=?, current_stock=?, min_stock=? WHERE id=?";
         
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, name);
-            pstmt.setString(2, categoryInput.getValue());
-            pstmt.setDouble(3, Double.parseDouble(priceInput.getText()));
-            pstmt.setDouble(4, Double.parseDouble(costInput.getText()));
-            pstmt.setInt(5, Integer.parseInt(stockInput.getText()));
-            pstmt.setInt(6, Integer.parseInt(minStockInput.getText()));
+            // Handle null category from dropdown
+            pstmt.setString(2, categoryInput.getValue() != null ? categoryInput.getValue() : "Uncategorized");
+            
+            // Handle empty inputs safely
+            pstmt.setDouble(3, parseDoubleSafe(priceInput.getText()));
+            pstmt.setDouble(4, parseDoubleSafe(costInput.getText()));
+            pstmt.setInt(5, parseIntSafe(stockInput.getText()));
+            pstmt.setInt(6, parseIntSafe(minStockInput.getText()));
             
             if (editingProductId != -1) {
                 pstmt.setInt(7, editingProductId);
@@ -216,6 +222,16 @@ public class InventoryController {
                 return rs.next() ? rs.getInt(1) : -1;
             }
         }
+    }
+    
+    // Helper methods for safer parsing
+    private double parseDoubleSafe(String text) {
+        try { return text == null || text.trim().isEmpty() ? 0.0 : Double.parseDouble(text); } 
+        catch (NumberFormatException e) { return 0.0; }
+    }
+    private int parseIntSafe(String text) {
+        try { return text == null || text.trim().isEmpty() ? 0 : Integer.parseInt(text); } 
+        catch (NumberFormatException e) { return 0; }
     }
 
     public void refreshInventory() {
@@ -246,41 +262,105 @@ public class InventoryController {
     }
 
     private VBox createProductCard(Product p) {
-        VBox card = new VBox(12);
-        card.getStyleClass().add("product-card");
+        VBox card = new VBox(15);
+        card.setPrefWidth(320);
+        card.setStyle("-fx-background-color: white; -fx-padding: 20; -fx-border-color: #e8e8e8; -fx-border-radius: 10; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 4);");
+
+        // --- Safe Variable Assignments ---
+        String safeName = p.getName() != null ? p.getName() : "Unnamed Product";
+        String safeCategory = (p.getCategory() != null && !p.getCategory().trim().isEmpty()) ? p.getCategory() : "Uncategorized";
+        String safeDesc = (p.getDescription() != null && !p.getDescription().trim().isEmpty()) ? p.getDescription() : safeName.toLowerCase();
+
+        // --- Top Row: Title, Description, Actions ---
         HBox headerRow = new HBox();
-        headerRow.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
-        VBox titleBox = new VBox(2);
-        Label name = new Label(p.getName());
-        name.getStyleClass().add("product-title");
-        Label desc = new Label(p.getDescription() != null ? p.getDescription() : p.getName().toLowerCase());
-        desc.getStyleClass().add("product-desc");
+        headerRow.setAlignment(javafx.geometry.Pos.TOP_LEFT);
+        VBox titleBox = new VBox(5);
+        Label name = new Label(safeName);
+        name.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1a1a1a;");
+        Label desc = new Label(safeDesc);
+        desc.setStyle("-fx-font-size: 12px; -fx-text-fill: #737373;");
         titleBox.getChildren().addAll(name, desc);
+        
         Pane spacer = new Pane();
         HBox.setHgrow(spacer, Priority.ALWAYS);
-        HBox actionIcons = new HBox(10);
+        
+        HBox actionIcons = new HBox(8);
         Button editBtn = new Button("📝");
-        editBtn.getStyleClass().add("icon-button");
+        editBtn.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-padding: 0;");
         editBtn.setOnAction(e -> openEditProductModal(p)); 
         Button deleteBtn = new Button("🗑");
-        deleteBtn.getStyleClass().add("icon-button");
+        deleteBtn.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-padding: 0;");
         deleteBtn.setOnAction(e -> deleteProduct(p));
         actionIcons.getChildren().addAll(editBtn, deleteBtn);
         headerRow.getChildren().addAll(titleBox, spacer, actionIcons);
 
+        // --- Tags Row ---
         HBox tagsRow = new HBox(8);
-        Label catTag = new Label(p.getCategory());
-        catTag.getStyleClass().add("tag-category");
+        
+        Label catTag = new Label(safeCategory.toLowerCase());
+        // Dynamic colors, defaulting to brown if unrecognized
+        String catColor = safeCategory.equalsIgnoreCase("Milktea") ? "#fce4ec" : "#d7ccc8";
+        String catTextCol = safeCategory.equalsIgnoreCase("Milktea") ? "#d81b60" : "#5d4037";
+        catTag.setStyle("-fx-background-color: " + catColor + "; -fx-text-fill: " + catTextCol + "; -fx-padding: 4 8 4 8; -fx-background-radius: 5; -fx-font-size: 11px; -fx-font-weight: bold;");
+        
         boolean isLow = p.getCurrentStock() <= p.getMinStock();
         Label statusTag = new Label(isLow ? "Low Stock" : "In Stock");
-        statusTag.getStyleClass().add(isLow ? "tag-lowstock" : "tag-instock");
+        statusTag.setStyle(isLow ? "-fx-background-color: #ffebee; -fx-text-fill: #c62828; -fx-padding: 4 8 4 8; -fx-background-radius: 5; -fx-font-size: 11px;" 
+                                 : "-fx-background-color: #e8f5e9; -fx-text-fill: #00c853; -fx-padding: 4 8 4 8; -fx-background-radius: 5; -fx-font-size: 11px;");
         tagsRow.getChildren().addAll(catTag, statusTag);
 
-        ProgressBar stockBar = new ProgressBar(p.getStockPercentage());
-        stockBar.getStyleClass().add("stock-bar");
-        stockBar.setMaxWidth(Double.MAX_VALUE);
+        // --- Pricing Row ---
+        HBox pricingRow = new HBox(50);
+        VBox sellingBox = new VBox(2);
+        Label sellLabel = new Label("Selling Price");
+        sellLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #737373;");
+        Label sellValue = new Label("₱" + String.format("%.0f", p.getSellingPrice()));
+        sellValue.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #00c853;");
+        sellingBox.getChildren().addAll(sellLabel, sellValue);
 
-        card.getChildren().addAll(headerRow, tagsRow, stockBar);
+        VBox costBox = new VBox(2);
+        Label costLabel = new Label("Cost Price");
+        costLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #737373;");
+        Label costValue = new Label("₱" + String.format("%.0f", p.getCostPrice()));
+        costValue.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #1a1a1a;");
+        costBox.getChildren().addAll(costLabel, costValue);
+        pricingRow.getChildren().addAll(sellingBox, costBox);
+
+        // --- Stock Overview Row ---
+        HBox stockRow = new HBox();
+        stockRow.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+        Label unitsLabel = new Label("📦 " + p.getCurrentStock() + " units");
+        unitsLabel.setStyle("-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #00c853;");
+        Pane stockSpacer = new Pane();
+        HBox.setHgrow(stockSpacer, Priority.ALWAYS);
+        Label minLabel = new Label("Min: " + p.getMinStock());
+        minLabel.setStyle("-fx-font-size: 11px; -fx-text-fill: #737373;");
+        stockRow.getChildren().addAll(unitsLabel, stockSpacer, minLabel);
+
+        // --- Progress Bar Section ---
+        VBox progressSection = new VBox(3);
+        ProgressBar stockBar = new ProgressBar(p.getStockPercentage());
+        stockBar.setMaxWidth(Double.MAX_VALUE);
+        stockBar.setPrefHeight(6);
+        stockBar.setStyle("-fx-accent: #00c853; -fx-control-inner-background: #f0f0f0;");
+        
+        HBox progressLabels = new HBox();
+        Label pLabel = new Label("Stock Level");
+        pLabel.setStyle("-fx-font-size: 10px; -fx-text-fill: #a0a0a0;");
+        Pane pSpacer = new Pane();
+        HBox.setHgrow(pSpacer, Priority.ALWAYS);
+        Label pValue = new Label(String.format("%.0f%%", p.getStockPercentage() * 100));
+        pValue.setStyle("-fx-font-size: 10px; -fx-text-fill: #a0a0a0;");
+        progressLabels.getChildren().addAll(pLabel, pSpacer, pValue);
+        progressSection.getChildren().addAll(stockBar, progressLabels);
+
+        // --- Adjust Stock Button ---
+        Button adjustBtn = new Button("📝 Adjust Stock");
+        adjustBtn.setMaxWidth(Double.MAX_VALUE);
+        adjustBtn.setStyle("-fx-background-color: #f8f9fa; -fx-border-color: #e8e8e8; -fx-border-radius: 6; -fx-background-radius: 6; -fx-text-fill: #333333; -fx-font-weight: bold; -fx-cursor: hand; -fx-padding: 8 0;");
+        adjustBtn.setOnAction(e -> openEditProductModal(p));
+
+        card.getChildren().addAll(headerRow, tagsRow, pricingRow, stockRow, progressSection, adjustBtn);
         return card;
     }
 
@@ -307,30 +387,47 @@ public class InventoryController {
 
     private VBox createRawMaterialCard(RawMaterial rm) {
         VBox card = new VBox(12);
-        card.getStyleClass().add("product-card");
+        card.setPrefWidth(320);
+        card.setStyle("-fx-background-color: white; -fx-padding: 20; -fx-border-color: #e8e8e8; -fx-border-radius: 10; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 4);");
+        
+        String safeName = rm.getName() != null ? rm.getName() : "Unknown Material";
+        String safeUnit = rm.getUnit() != null ? rm.getUnit() : "unit";
+        
         HBox header = new HBox();
         header.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
-        Label name = new Label(rm.getName());
-        name.getStyleClass().add("product-title");
+        Label name = new Label(safeName);
+        name.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1a1a1a;");
         Pane spacer = new Pane(); HBox.setHgrow(spacer, Priority.ALWAYS);
-        HBox actions = new HBox(10);
-        Button editBtn = new Button("📝"); editBtn.getStyleClass().add("icon-button");
+        HBox actions = new HBox(8);
+        Button editBtn = new Button("📝"); 
+        editBtn.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-padding: 0;");
         editBtn.setOnAction(e -> openEditRawMaterialModal(rm)); 
-        Button deleteBtn = new Button("🗑"); deleteBtn.getStyleClass().add("icon-button");
+        Button deleteBtn = new Button("🗑"); 
+        deleteBtn.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-padding: 0;");
         deleteBtn.setOnAction(e -> deleteRawMaterial(rm));
         actions.getChildren().addAll(editBtn, deleteBtn);
         header.getChildren().addAll(name, spacer, actions);
-        Label desc = new Label(rm.getName().toLowerCase() + " (per " + rm.getUnit() + ")");
-        desc.getStyleClass().add("product-desc");
+        
+        Label desc = new Label(safeName.toLowerCase() + " (per " + safeUnit + ")");
+        desc.setStyle("-fx-font-size: 12px; -fx-text-fill: #737373;");
+        
         ProgressBar stockBar = new ProgressBar(rm.getStockPercentage());
-        stockBar.getStyleClass().add("stock-bar"); stockBar.setMaxWidth(Double.MAX_VALUE);
+        stockBar.setMaxWidth(Double.MAX_VALUE);
+        stockBar.setPrefHeight(6);
+        stockBar.setStyle("-fx-accent: #00c853; -fx-control-inner-background: #f0f0f0;");
+        
         card.getChildren().addAll(header, desc, stockBar);
         return card;
     }
 
     @FXML
     public void saveRawMaterial() {
-        String name = rawNameInput.getText().trim();
+        String name = rawNameInput.getText() != null ? rawNameInput.getText().trim() : "";
+        if (name.isEmpty()) {
+            showAlert("Validation Error", "Raw material name cannot be empty.");
+            return;
+        }
+        
         if (isDuplicateName("raw_materials", name, editingRawMaterialId)) {
             showDuplicateAlert(name);
             return;
@@ -340,16 +437,19 @@ public class InventoryController {
             : "UPDATE raw_materials SET name=?, unit=?, current_stock=?, min_stock=?, status=? WHERE id=?";
         try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASS);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            double current = Double.parseDouble(rawStockInput.getText());
-            double min = (minStockInput != null && !minStockInput.getText().isEmpty()) ? Double.parseDouble(minStockInput.getText()) : 0;
+            double current = parseDoubleSafe(rawStockInput.getText());
+            double min = parseDoubleSafe(minStockInput != null ? minStockInput.getText() : "0");
             String status = (current <= min) ? (current <= 0 ? "Out of Stock" : "Low Stock") : "In Stock";
+            
             pstmt.setString(1, name);
-            pstmt.setString(2, unitCombo.getValue());
+            pstmt.setString(2, unitCombo.getValue() != null ? unitCombo.getValue() : "Pieces");
             pstmt.setDouble(3, current);
             pstmt.setDouble(4, min);
             pstmt.setString(5, status);
+            
             if (editingRawMaterialId != -1) pstmt.setInt(6, editingRawMaterialId);
             pstmt.executeUpdate();
+            
             handleCloseModal();
             refreshRawMaterials();
             editingRawMaterialId = -1;
@@ -450,13 +550,13 @@ public class InventoryController {
         editingProductId = p.getId();
         if (nameInput != null) {
             nameInput.setText(p.getName());
-            categoryInput.setValue(p.getCategory());
+            categoryInput.setValue(p.getCategory() != null ? p.getCategory() : "");
             priceInput.setText(String.valueOf(p.getSellingPrice()));
             costInput.setText(String.valueOf(p.getCostPrice()));
             stockInput.setText(String.valueOf(p.getCurrentStock()));
             minStockInput.setText(String.valueOf(p.getMinStock()));
             if (modalHeaderLabel != null) modalHeaderLabel.setText("Edit Product");
-            loadProductIngredients(p.getId()); // Synchronizes the TableView with DB data
+            loadProductIngredients(p.getId()); 
         }
     }
 
