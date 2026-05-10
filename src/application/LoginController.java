@@ -77,6 +77,6 @@ public class LoginController {
 
     @FXML public void handleUseDemoAccount() {
         usernameField.setText("admin");
-        passwordField.setText("Admin235");
+        passwordField.setText("admin");
     }
 }

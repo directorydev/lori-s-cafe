@@ -62,7 +62,7 @@
                         <VBox spacing="2.0">
                            <children>
                               <Label fx:id="demoUserLabel" styleClass="demo-info-label" text="Admin: admin" />
-                              <Label fx:id="demoPassLabel" prefHeight="18.0" prefWidth="135.0" styleClass="demo-info-label" text="Password: Admin235" />
+                              <Label fx:id="demoPassLabel" prefHeight="18.0" prefWidth="135.0" styleClass="demo-info-label" text="Password: admin" />
                            </children>
                         </VBox>
                         <Button fx:id="useDemoAccountButton" mnemonicParsing="false" onAction="#handleUseDemoAccount" prefHeight="32.0" prefWidth="150.0" styleClass="demo-btn" text="Auto-fill" />
