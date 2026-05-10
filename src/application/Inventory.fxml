@@ -16,70 +16,88 @@
 <VBox spacing="20.0" styleClass="page-container" stylesheets="@application.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.InventoryController">
    <children>
       
-      <!-- Center Navigation Pills[cite: 7] -->
       <HBox alignment="CENTER">
          <children>
-            <HBox styleClass="pill-nav-container">
+            <HBox alignment="CENTER" styleClass="graph-nav-container">
                <children>
-                  <ToggleButton fx:id="productTab" mnemonicParsing="false" selected="true" styleClass="nav-pill" text="Products">
+                  <ToggleButton fx:id="productTab" mnemonicParsing="false" selected="true" styleClass="graph-tab" text="📦 Products">
                      <toggleGroup>
                         <ToggleGroup fx:id="inventoryTabs" />
                      </toggleGroup>
                   </ToggleButton>
-                  <ToggleButton fx:id="rawMaterialTab" mnemonicParsing="false" styleClass="nav-pill" text="Raw Materials" toggleGroup="$inventoryTabs" />
+                  <ToggleButton fx:id="rawMaterialTab" mnemonicParsing="false" styleClass="graph-tab" text="🥛 Raw Materials" toggleGroup="$inventoryTabs" />
                </children>
             </HBox>
          </children>
       </HBox>
 
-      <!-- Header Section[cite: 7] -->
       <HBox alignment="CENTER_LEFT">
          <children>
-            <VBox>
+            <HBox alignment="CENTER_LEFT" spacing="10.0">
                <children>
-                  <Label styleClass="header-title" text="Inventory Management" />
-                  <Label styleClass="header-subtitle" text="Lori's Taste Cafe products and stock levels" />
+                  <Label style="-fx-background-color: #10b981; -fx-text-fill: white; -fx-padding: 5 10; -fx-background-radius: 8px; -fx-font-size: 18px;" text="📦" />
+                  <VBox spacing="2.0">
+                     <children>
+                        <Label styleClass="header-title" style="-fx-text-fill: #065f46;" text="Inventory Management" />
+                        <Label styleClass="header-subtitle" text="Lori's Taste Cafe products and stock levels" />
+                     </children>
+                  </VBox>
                </children>
-            </VBox>
+            </HBox>
             <Pane HBox.hgrow="ALWAYS" />
             <Button fx:id="addItemBtn" mnemonicParsing="false" onAction="#handleAddItem" styleClass="primary-btn" text="+ Add Product" />
          </children>
       </HBox>
 
-      <!-- Summary Dashboard Cards[cite: 7] -->
-      <HBox spacing="20.0">
+      <HBox spacing="15.0">
          <children>
-            <VBox styleClass="summary-card, card-blue" HBox.hgrow="ALWAYS">
-               <Label styleClass="card-top-title" text="Total Items" />
-               <Label fx:id="totalProductsLabel" styleClass="card-main-value" text="0" />
-            </VBox>
-            <VBox styleClass="summary-card, card-green" HBox.hgrow="ALWAYS">
-               <Label styleClass="card-top-title" text="Total Value" />
-               <Label fx:id="totalValueLabel" styleClass="card-main-value" text="₱0" />
-            </VBox>
-            <VBox styleClass="summary-card, card-orange" HBox.hgrow="ALWAYS">
-               <Label styleClass="card-top-title" text="Low Stock" />
-               <Label fx:id="lowStockLabel" styleClass="card-main-value" text="0" />
-            </VBox>
-            <VBox styleClass="summary-card, card-purple" HBox.hgrow="ALWAYS">
-               <Label styleClass="card-top-title" text="Avg Stock Level" />
-               <Label fx:id="avgStockLabel" styleClass="card-main-value" text="0" />
-            </VBox>
+            <HBox alignment="CENTER_LEFT" spacing="15.0" styleClass="kpi-card-horizontal, kpi-blue-border" HBox.hgrow="ALWAYS">
+               <children>
+                  <Label styleClass="kpi-icon-blue" text="📋" />
+                  <VBox alignment="CENTER_LEFT">
+                     <Label styleClass="kpi-title" text="Total Items" />
+                     <Label fx:id="totalProductsLabel" styleClass="kpi-value-blue" text="0" />
+                  </VBox>
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" spacing="15.0" styleClass="kpi-card-horizontal, kpi-green-border" HBox.hgrow="ALWAYS">
+               <children>
+                  <Label styleClass="kpi-icon-green" text="₱" />
+                  <VBox alignment="CENTER_LEFT">
+                     <Label styleClass="kpi-title" text="Total Value" />
+                     <Label fx:id="totalValueLabel" styleClass="kpi-value-green" text="₱0" />
+                  </VBox>
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" spacing="15.0" styleClass="kpi-card-horizontal, kpi-orange-border" HBox.hgrow="ALWAYS">
+               <children>
+                  <Label styleClass="kpi-icon-orange" text="⚠️" />
+                  <VBox alignment="CENTER_LEFT">
+                     <Label styleClass="kpi-title" text="Low Stock" />
+                     <Label fx:id="lowStockLabel" styleClass="kpi-value-orange" text="0" />
+                  </VBox>
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" spacing="15.0" styleClass="kpi-card-horizontal, kpi-purple-border" HBox.hgrow="ALWAYS">
+               <children>
+                  <Label styleClass="kpi-icon-purple" text="📊" />
+                  <VBox alignment="CENTER_LEFT">
+                     <Label styleClass="kpi-title" text="Avg Stock Level" />
+                     <Label fx:id="avgStockLabel" styleClass="kpi-value-purple" text="0" />
+                  </VBox>
+               </children>
+            </HBox>
          </children>
       </HBox>
 
-      <!-- Filtering Section[cite: 7] -->
-      <HBox spacing="15.0">
-   <children>
-      <TextField fx:id="searchField" prefWidth="300.0" promptText="Search items..." styleClass="custom-input" />
-      
-      <ComboBox fx:id="stockLevelCombo" prefWidth="180.0" promptText="All Stock Levels" styleClass="custom-input" />
-      
-      <ComboBox fx:id="categoryCombo" prefWidth="180.0" promptText="All Categories" styleClass="custom-input" />
-   </children>
-</HBox>
+      <HBox spacing="15.0" alignment="CENTER_LEFT">
+         <children>
+            <TextField fx:id="searchField" promptText="Search items..." styleClass="search-bar-gray" HBox.hgrow="ALWAYS" />
+            <ComboBox fx:id="stockLevelCombo" prefWidth="180.0" promptText="All Stock Levels" styleClass="custom-input" />
+            <ComboBox fx:id="categoryCombo" prefWidth="180.0" promptText="All Categories" styleClass="custom-input" />
+         </children>
+      </HBox>
 
-      <!-- Scrollable Grid for Cards[cite: 2, 7] -->
       <ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-background: #f4f4f5;" VBox.vgrow="ALWAYS">
          <content>
             <FlowPane fx:id="productGrid" hgap="20.0" vgap="20.0">
@@ -89,8 +107,6 @@
             </FlowPane>
          </content>
       </ScrollPane>
-      
-      
       
    </children>
 </VBox>

@@ -263,3 +263,259 @@
     -fx-cursor: hand;
     -fx-font-size: 14px;
 }
+
+/* --- INTERACTIVE SOFT UI THEME --- */
+.form-container {
+    -fx-background-color: #fcfbf9;
+    -fx-background-radius: 20;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 15, 0, 0, 5);
+}
+
+/* Interactive Inputs */
+.custom-input {
+    -fx-background-color: white;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-transition: 0.3s;
+}
+
+.custom-input:focused {
+    -fx-border-color: #2d3436;
+    -fx-effect: dropshadow(three-pass-box, rgba(45, 52, 54, 0.1), 8, 0, 0, 0);
+}
+
+/* Tab Interaction */
+.tab-pane .tab-header-area .tab {
+    -fx-background-color: #f1f2f6;
+    -fx-background-radius: 12 12 0 0;
+    -fx-padding: 12 35;
+    -fx-cursor: hand;
+}
+
+.tab-pane .tab:hover {
+    -fx-background-color: #e1e2e6;
+}
+
+.tab-pane .tab:selected {
+    -fx-background-color: white;
+    -fx-border-color: #2d3436;
+    -fx-border-width: 0 0 3 0; /* Modern bottom-border indicator */
+}
+
+/* Animated Buttons */
+.primary-btn {
+    -fx-background-color: #2d3436;
+    -fx-text-fill: white;
+    -fx-background-radius: 10;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.primary-btn:hover {
+    -fx-background-color: #1a1e1f;
+    -fx-scale-x: 1.03;
+    -fx-scale-y: 1.03;
+}
+
+.secondary-btn {
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: #dfe6e9;
+    -fx-border-radius: 10;
+    -fx-cursor: hand;
+}
+
+.secondary-btn:hover {
+    -fx-background-color: #eceff1;
+}
+
+/* Table Interaction */
+.ingredient-table {
+    -fx-background-color: white;
+    -fx-border-color: #f1f2f6;
+    -fx-border-radius: 10;
+}
+
+.ingredient-table .column-header {
+    -fx-background-color: #f8f9fa;
+    -fx-text-fill: #636e72;
+}
+
+/* --- ANALYTICS KPI CARDS --- */
+.kpi-card {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 12px;
+    -fx-padding: 20px;
+    -fx-border-radius: 12px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.04), 10, 0, 0, 4);
+}
+.kpi-title { -fx-font-size: 13px; -fx-font-weight: bold; }
+
+/* Green Theme */
+.kpi-green { -fx-border-color: #10b981; -fx-background-color: #ecfdf5; -fx-border-width: 2px; }
+.kpi-green .kpi-title { -fx-text-fill: #065f46; }
+.kpi-value-green { -fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #059669; }
+.kpi-desc-green { -fx-font-size: 12px; -fx-text-fill: #10b981; }
+.kpi-icon-green { -fx-background-color: #d1fae5; -fx-text-fill: #059669; -fx-padding: 5 10; -fx-background-radius: 20; -fx-font-size: 16px; }
+
+/* Blue Theme */
+.kpi-blue { -fx-border-color: #3b82f6; -fx-background-color: #eff6ff; -fx-border-width: 2px; }
+.kpi-blue .kpi-title { -fx-text-fill: #1e40af; }
+.kpi-value-blue { -fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #2563eb; }
+.kpi-desc-blue { -fx-font-size: 12px; -fx-text-fill: #3b82f6; }
+.kpi-icon-blue { -fx-background-color: #dbeafe; -fx-text-fill: #2563eb; -fx-padding: 5 10; -fx-background-radius: 20; -fx-font-size: 16px; }
+
+/* Purple Theme */
+.kpi-purple { -fx-border-color: #8b5cf6; -fx-background-color: #f5f3ff; -fx-border-width: 2px; }
+.kpi-purple .kpi-title { -fx-text-fill: #5b21b6; }
+.kpi-value-purple { -fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #7c3aed; }
+.kpi-desc-purple { -fx-font-size: 12px; -fx-text-fill: #8b5cf6; }
+.kpi-icon-purple { -fx-background-color: #ede9fe; -fx-text-fill: #7c3aed; -fx-padding: 5 10; -fx-background-radius: 20; -fx-font-size: 16px; }
+
+/* Orange Theme */
+.kpi-orange { -fx-border-color: #f97316; -fx-background-color: #fff7ed; -fx-border-width: 2px; }
+.kpi-orange .kpi-title { -fx-text-fill: #9a3412; }
+.kpi-value-orange { -fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #ea580c; }
+.kpi-desc-orange { -fx-font-size: 12px; -fx-text-fill: #f97316; }
+.kpi-icon-orange { -fx-background-color: #ffedd5; -fx-text-fill: #ea580c; -fx-padding: 5 10; -fx-background-radius: 20; -fx-font-size: 16px; }
+
+/* --- GRAPH NAVIGATION TABS --- */
+.graph-nav-container {
+    -fx-background-color: #f3f4f6;
+    -fx-background-radius: 10px;
+    -fx-padding: 5px;
+    -fx-max-width: 800px; /* Keeps it centered and compact */
+}
+.graph-tab {
+    -fx-background-color: transparent;
+    -fx-text-fill: #6b7280;
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+    -fx-padding: 10px 20px;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+    -fx-transition: 0.2s;
+}
+.graph-tab:hover { -fx-text-fill: #111827; }
+.graph-tab:selected {
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #111827;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 2);
+}
+
+/* --- PROFESSIONAL CHARTS --- */
+.chart-header {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #374151;
+}
+
+.clean-chart {
+    -fx-padding: 10px;
+}
+/* Hide the ugly outer chart grid lines */
+.clean-chart .chart-plot-background { -fx-background-color: transparent; }
+.clean-chart .chart-vertical-grid-lines { -fx-stroke: transparent; }
+.clean-chart .chart-horizontal-grid-lines { -fx-stroke: #f3f4f6; -fx-stroke-dash-array: 5 5; }
+
+/* Style the Line Chart to be Green */
+.clean-chart .chart-series-line { -fx-stroke: #10b981; -fx-stroke-width: 3px; }
+.clean-chart .chart-line-symbol {
+    -fx-background-color: #ffffff, #10b981;
+    -fx-background-insets: 0, 2;
+    -fx-background-radius: 5px;
+    -fx-padding: 5px;
+}
+
+/* Style the Bar chart to be soft blue */
+.blue-bar-chart .chart-bar {
+    -fx-bar-fill: #bfdbfe;
+    -fx-background-radius: 5 5 0 0;
+}
+
+.micro-btn {
+    -fx-background-color: #f3f4f6;
+    -fx-border-color: #e5e7eb;
+    -fx-border-radius: 4px;
+    -fx-font-size: 11px;
+    -fx-text-fill: #4b5563;
+    -fx-padding: 4px 8px;
+}
+
+/* ========================================= */
+/* ORDER MANAGEMENT STYLES                   */
+/* ========================================= */
+
+/* Horizontal KPI Cards for Orders Tab */
+.kpi-card-horizontal {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 12px;
+    -fx-padding: 15px 20px;
+    -fx-border-radius: 12px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.03), 10, 0, 0, 4);
+}
+
+/* Card Borders */
+.kpi-blue-border { -fx-border-color: #3b82f6; -fx-border-width: 1px; }
+.kpi-green-border { -fx-border-color: #10b981; -fx-border-width: 1px; }
+.kpi-purple-border { -fx-border-color: #8b5cf6; -fx-border-width: 1px; }
+.kpi-orange-border { -fx-border-color: #f97316; -fx-border-width: 1px; }
+
+/* Gray Search Bar */
+.search-bar-gray {
+    -fx-background-color: #f3f4f6;
+    -fx-border-color: transparent;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-padding: 10px 15px;
+    -fx-font-size: 13px;
+    -fx-text-fill: #111827;
+}
+.search-bar-gray:focused {
+    -fx-background-color: #e5e7eb;
+}
+
+/* Clean Table Styling */
+.clean-table {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+.clean-table .column-header-background {
+    -fx-background-color: #f9fafb;
+    -fx-border-color: #e5e7eb;
+    -fx-border-width: 0 0 1px 0;
+}
+.clean-table .column-header {
+    -fx-background-color: transparent;
+    -fx-padding: 10px;
+}
+.clean-table .column-header .label {
+    -fx-font-weight: bold;
+    -fx-text-fill: #6b7280;
+}
+.clean-table .table-row-cell {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #f3f4f6;
+    -fx-border-width: 0 0 1px 0;
+    -fx-cell-size: 45px;
+}
+.clean-table .table-row-cell:hover {
+    -fx-background-color: #f9fafb;
+}
+/* Update Dynamic Product Cards to match the new soft shadow look */
+.product-card {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #f3f4f6;
+    -fx-border-width: 1px;
+    -fx-border-radius: 12px;
+    -fx-background-radius: 12px;
+    -fx-padding: 20px;
+    -fx-pref-width: 330px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.04), 10, 0, 0, 4);
+    -fx-transition: 0.2s;
+}
+
+.product-card:hover {
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.08), 15, 0, 0, 6);
+    -fx-translate-y: -2px;
+}

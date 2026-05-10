@@ -409,16 +409,32 @@ public class InventoryController {
         if (inventoryTabs != null) {
             inventoryTabs.selectedToggleProperty().addListener((obs, oldVal, newVal) -> {
                 if (newVal == productTab) {
-                    isProductMode = true; addItemBtn.setText("+ Add Product");
-                    categoryCombo.setDisable(false); refreshInventory();
+                    isProductMode = true; 
+                    addItemBtn.setText("+ Add Product");
+                    categoryCombo.setDisable(false); 
+                    
+                    // SHOW the summary labels for Products
+                    if (totalValueLabel != null && totalValueLabel.getParent() != null) {
+                        totalValueLabel.getParent().setVisible(true); 
+                    }
+                    
+                    refreshInventory();
+                    
                 } else if (newVal == rawMaterialTab) {
-                    isProductMode = false; addItemBtn.setText("+ Add Raw Material");
-                    categoryCombo.setDisable(true); refreshRawMaterials();
+                    isProductMode = false; 
+                    addItemBtn.setText("+ Add Raw Material");
+                    categoryCombo.setDisable(true); 
+                    
+                    // HIDE the summary labels for Raw Materials
+                    if (totalValueLabel != null && totalValueLabel.getParent() != null) {
+                        totalValueLabel.getParent().setVisible(false); 
+                    }
+                    
+                    refreshRawMaterials();
                 }
             });
         }
     }
-
     private void setupCategoryFiltering() {
         if (categoryCombo != null) {
             categoryCombo.getItems().clear();

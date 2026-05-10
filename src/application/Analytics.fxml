@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.chart.PieChart?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<ScrollPane fitToWidth="true" styleClass="main-bg" stylesheets="@application.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.AnalyticsController">
+   <content>
+      <VBox spacing="25.0" styleClass="page-container">
+         <children>
+            <HBox alignment="CENTER_LEFT">
+               <children>
+                  <HBox spacing="10" alignment="CENTER_LEFT">
+                     <Label style="-fx-font-size: 24px; -fx-text-fill: #6366f1;" text="📊" />
+                     <VBox spacing="2.0">
+                        <Label styleClass="header-title" text="Sales Analytics Dashboard" style="-fx-text-fill: #6366f1;" />
+                        <Label styleClass="header-subtitle" text="Real-time insights and performance metrics for Lori's Taste Cafe" />
+                     </VBox>
+                  </HBox>
+                  <Pane HBox.hgrow="ALWAYS" />
+                  <HBox spacing="10.0" alignment="CENTER_RIGHT">
+                     <Button mnemonicParsing="false" styleClass="secondary-btn" text="📥 Export Data" />
+                     <ComboBox fx:id="timeFilterCombo" prefWidth="120.0" promptText="Today" styleClass="custom-input" />
+                  </HBox>
+               </children>
+            </HBox>
+
+            <GridPane hgap="20.0" vgap="20.0">
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="120.0" prefHeight="120.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <children>
+                  <VBox styleClass="kpi-card, kpi-green">
+                     <HBox alignment="CENTER_LEFT"><Label styleClass="kpi-title" text="Total Revenue"/><Pane HBox.hgrow="ALWAYS"/><Label styleClass="kpi-icon-green" text="💲"/></HBox>
+                     <Label fx:id="revenueLabel" styleClass="kpi-value-green" text="₱0.00" />
+                     <Label styleClass="kpi-desc-green" text="↗ 0.0% vs last today" />
+                  </VBox>
+                  <VBox styleClass="kpi-card, kpi-blue" GridPane.columnIndex="1">
+                     <HBox alignment="CENTER_LEFT"><Label styleClass="kpi-title" text="Total Orders"/><Pane HBox.hgrow="ALWAYS"/><Label styleClass="kpi-icon-blue" text="🛒"/></HBox>
+                     <Label fx:id="ordersLabel" styleClass="kpi-value-blue" text="0" />
+                     <Label styleClass="kpi-desc-blue" text="↗ 0.0% vs last today" />
+                  </VBox>
+                  <VBox styleClass="kpi-card, kpi-purple" GridPane.columnIndex="2">
+                     <HBox alignment="CENTER_LEFT"><Label styleClass="kpi-title" text="Average Order Value"/><Pane HBox.hgrow="ALWAYS"/><Label styleClass="kpi-icon-purple" text="📈"/></HBox>
+                     <Label fx:id="avgOrderLabel" styleClass="kpi-value-purple" text="₱0.00" />
+                     <Label styleClass="kpi-desc-purple" text="↗ 0.0% vs last today" />
+                  </VBox>
+                  <VBox styleClass="kpi-card, kpi-orange" GridPane.columnIndex="3">
+                     <HBox alignment="CENTER_LEFT"><Label styleClass="kpi-title" text="Top Product"/><Pane HBox.hgrow="ALWAYS"/><Label styleClass="kpi-icon-orange" text="☕"/></HBox>
+                     <Label fx:id="topProductLabel" styleClass="kpi-value-orange" text="0" />
+                     <Label styleClass="kpi-desc-orange" text="No sales" />
+                  </VBox>
+               </children>
+            </GridPane>
+
+            <HBox alignment="CENTER">
+    <children>
+        <HBox alignment="CENTER" styleClass="graph-nav-container">
+            <ToggleButton fx:id="btnSalesTrends" text="⚡ Sales Trends" selected="true" styleClass="graph-tab" onAction="#switchChartCategory">
+                <toggleGroup><ToggleGroup fx:id="graphNavGroup"/></toggleGroup>
+            </ToggleButton>
+            <ToggleButton fx:id="btnProducts" text="📦 Products" toggleGroup="$graphNavGroup" styleClass="graph-tab" onAction="#switchChartCategory"/>
+            <ToggleButton fx:id="btnCategories" text="📊 Categories" toggleGroup="$graphNavGroup" styleClass="graph-tab" onAction="#switchChartCategory"/>
+            <ToggleButton fx:id="btnPayments" text="💲 Payments" toggleGroup="$graphNavGroup" styleClass="graph-tab" onAction="#switchChartCategory"/>
+            <ToggleButton fx:id="btnInsights" text="✨ Insights" toggleGroup="$graphNavGroup" styleClass="graph-tab" onAction="#switchChartCategory"/>
+        </HBox>
+    </children>
+</HBox>
+
+            <StackPane fx:id="chartStackPane" VBox.vgrow="ALWAYS">
+               
+               <HBox fx:id="viewSalesTrends" spacing="20.0">
+                  <VBox spacing="10.0" styleClass="dashboard-card" HBox.hgrow="ALWAYS">
+                     <HBox alignment="CENTER_LEFT">
+                        <Label styleClass="chart-header" text="📅 Daily Sales Trend" />
+                        <Pane HBox.hgrow="ALWAYS" />
+                        <Button text="Hourly" styleClass="micro-btn" />
+                     </HBox>
+                     <LineChart fx:id="dailySalesChart" createSymbols="true" legendVisible="false" prefHeight="300.0" styleClass="clean-chart">
+                       <xAxis><CategoryAxis side="BOTTOM" tickLabelsVisible="true" opacity="0.5" /></xAxis>
+                       <yAxis><NumberAxis side="LEFT" tickLabelsVisible="true" opacity="0.5" /></yAxis>
+                     </LineChart>
+                  </VBox>
+                  <VBox spacing="10.0" styleClass="dashboard-card" HBox.hgrow="ALWAYS">
+                     <HBox alignment="CENTER_LEFT">
+                        <Label styleClass="chart-header" text="🕒 Hourly Performance" />
+                     </HBox>
+                     <BarChart fx:id="hourlyBarChart" legendVisible="false" prefHeight="300.0" styleClass="clean-chart, blue-bar-chart">
+                       <xAxis><CategoryAxis side="BOTTOM" opacity="0.5"/></xAxis>
+                       <yAxis><NumberAxis side="LEFT" opacity="0.5"/></yAxis>
+                     </BarChart>
+                  </VBox>
+               </HBox>
+
+               <HBox fx:id="viewCategories" spacing="20.0" visible="false">
+                  <VBox spacing="10.0" styleClass="dashboard-card" HBox.hgrow="ALWAYS">
+                     <Label styleClass="chart-header" text="Category Distribution" />
+                     <PieChart fx:id="categoryPieChart" prefHeight="300.0" legendSide="RIGHT" />
+                  </VBox>
+               </HBox>
+               
+            </StackPane>
+         </children>
+      </VBox>
+   </content>
+</ScrollPane>
