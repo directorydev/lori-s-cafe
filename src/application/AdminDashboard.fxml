@@ -25,7 +25,7 @@
                   <Pane HBox.hgrow="ALWAYS" />
                   <HBox alignment="CENTER_RIGHT" spacing="15.0">
                      <children>
-                        <Label fx:id="dateTimeLabel" styleClass="header-subtitle" text="Sun, May 3, 2026, 1:25 AM" />
+                        <Label fx:id="dateTimeLabel" styleClass="header-subtitle" text="Loading Date..." />
                         <Button onAction="#handleLogout" styleClass="secondary-btn" text="Logout" />
                      </children>
                   </HBox>
@@ -59,27 +59,9 @@
             <VBox fx:id="dashboardContentArea" spacing="30.0" styleClass="page-container">
                <children>
                   
-                  <VBox styleClass="announcement-banner">
-                     <children>
-                        <HBox alignment="CENTER_LEFT" spacing="15.0">
-                           <children>
-                              <Label styleClass="announcement-icon" text="★" />
-                              <VBox spacing="2.0">
-                                 <children>
-                                    <Label style="-fx-font-weight: bold; -fx-text-fill: #1e40af;" text="Smart Promotions Available" />
-                                    <Label style="-fx-text-fill: #3b82f6;" text="AI-powered marketing suggestions to boost sales and reduce waste." />
-                                 </children>
-                              </VBox>
-                              <Pane HBox.hgrow="ALWAYS" />
-                              <Button styleClass="announcement-button" text="View Suggestions" />
-                           </children>
-                        </HBox>
-                     </children>
-                  </VBox>
-                  
                   <HBox spacing="20.0">
                      <children>
-                        <VBox alignment="CENTER_LEFT" prefWidth="300.0" spacing="15.0" styleClass="kpi-card, kpi-blue-border" HBox.hgrow="ALWAYS">
+                        <VBox onMouseClicked="#handleStartSale" alignment="CENTER_LEFT" prefWidth="300.0" spacing="15.0" styleClass="kpi-card, kpi-blue-border" HBox.hgrow="ALWAYS" style="-fx-cursor: hand;">
                            <children>
                               <HBox alignment="TOP_LEFT" spacing="10.0">
                                  <children>
@@ -92,7 +74,8 @@
                               <Label styleClass="card-description" text="Create new order" />
                            </children>
                         </VBox>
-                        <VBox prefWidth="300.0" spacing="15.0" styleClass="kpi-card, kpi-green-border" HBox.hgrow="ALWAYS">
+                        
+                        <VBox onMouseClicked="#handleCardInventory" prefWidth="300.0" spacing="15.0" styleClass="kpi-card, kpi-green-border" HBox.hgrow="ALWAYS" style="-fx-cursor: hand;">
                            <children>
                               <HBox alignment="TOP_LEFT" spacing="10.0">
                                  <children>
@@ -101,10 +84,11 @@
                                     <Label style="-fx-font-size: 20px;" text="📦" />
                                  </children>
                               </HBox>
-                              <Label styleClass="kpi-value-green" text="2325" />
+                              <Label fx:id="totalInventoryLabel" styleClass="kpi-value-green" text="0" />
                               <Label styleClass="card-description" text="Items in stock" />
                            </children>
                         </VBox>
+                        
                         <VBox prefWidth="300.0" spacing="15.0" styleClass="kpi-card, kpi-purple-border" HBox.hgrow="ALWAYS">
                            <children>
                               <HBox alignment="TOP_LEFT" spacing="10.0">
@@ -114,8 +98,8 @@
                                     <Label style="-fx-font-size: 20px;" text="📊" />
                                  </children>
                               </HBox>
-                              <Label styleClass="kpi-value-purple" text="₱0.00" />
-                              <Label styleClass="card-description" text="0 orders" />
+                              <Label fx:id="todaySalesLabel" styleClass="kpi-value-purple" text="₱0.00" />
+                              <Label styleClass="card-description" text="Live revenue tracking" />
                            </children>
                         </VBox>
                      </children>
@@ -123,7 +107,7 @@
 
                   <HBox spacing="20.0">
                      <children>
-                        <VBox prefWidth="300.0" spacing="15.0" styleClass="kpi-card, kpi-orange-border" HBox.hgrow="ALWAYS">
+                        <VBox onMouseClicked="#handleCardOrders" prefWidth="300.0" spacing="15.0" styleClass="kpi-card, kpi-orange-border" HBox.hgrow="ALWAYS" style="-fx-cursor: hand;">
                            <children>
                               <HBox alignment="TOP_LEFT" spacing="10.0">
                                  <children>
@@ -132,25 +116,12 @@
                                     <Label style="-fx-font-size: 20px;" text="🏷️" />
                                  </children>
                               </HBox>
-                              <Label styleClass="kpi-value-orange" text="0" />
+                              <Label fx:id="todayOrdersLabel" styleClass="kpi-value-orange" text="0" />
                               <Label styleClass="card-description" text="Orders today" />
                            </children>
                         </VBox>
-                        <VBox prefWidth="300.0" spacing="15.0" styleClass="kpi-card, kpi-green-border" HBox.hgrow="ALWAYS">
-                           <children>
-                              <HBox alignment="TOP_LEFT" spacing="10.0">
-                                 <children>
-                                    <Label style="-fx-text-fill: #10b981; -fx-font-weight: bold;" text="Promotions" />
-                                    <Pane HBox.hgrow="ALWAYS" />
-                                    <Label style="-fx-font-size: 20px;" text="✨" />
-                                 </children>
-                              </HBox>
-                              <Label styleClass="kpi-value-green" style="-fx-font-size: 22px;" text="Manage Promotions" />
-                              <Label styleClass="card-description" text="Boost sales with smart promotions" />
-                           </children>
-                        </VBox>
                         
-                        <VBox prefWidth="300.0" spacing="15.0" styleClass="kpi-card, kpi-blue-border" HBox.hgrow="ALWAYS">
+                        <VBox onMouseClicked="#handleCardLogs" prefWidth="300.0" spacing="15.0" styleClass="kpi-card, kpi-blue-border" HBox.hgrow="ALWAYS" style="-fx-cursor: hand;">
                            <children>
                               <HBox alignment="TOP_LEFT" spacing="10.0">
                                  <children>
@@ -159,11 +130,10 @@
                                     <Label style="-fx-font-size: 20px;" text="📋" />
                                  </children>
                               </HBox>
-                              <Label styleClass="kpi-value-blue" style="-fx-font-size: 22px;" text="View Movement History" />
-                              <Label styleClass="card-description" text="Track stock deductions and returns" />
+                              <Label styleClass="kpi-value-blue" style="-fx-font-size: 22px;" text="Movement History" />
+                              <Label styleClass="card-description" text="Track deductions and returns" />
                            </children>
                         </VBox>
-                        
                      </children>
                   </HBox>
 
