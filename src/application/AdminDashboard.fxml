@@ -44,8 +44,6 @@
                         <ToggleButton fx:id="inventoryToggle" mnemonicParsing="false" onAction="#showInventory" styleClass="nav-pill" text="Inventory" toggleGroup="$mainNavToggleGroup" />
                         <ToggleButton fx:id="ordersToggle" mnemonicParsing="false" onAction="#showOrders" styleClass="nav-pill" text="Orders" toggleGroup="$mainNavToggleGroup" />
                         <ToggleButton fx:id="analyticsToggle" mnemonicParsing="false" onAction="#handleAnalytics" styleClass="nav-pill" text="Analytics" toggleGroup="$mainNavToggleGroup" />
-                        <ToggleButton fx:id="promotionsToggle" mnemonicParsing="false" onAction="#handlePromotions" styleClass="nav-pill" text="Promotions" toggleGroup="$mainNavToggleGroup" />
-                        
                         <ToggleButton fx:id="settingsToggle" mnemonicParsing="false" onAction="#handleSettings" styleClass="nav-pill" text="Inventory Logs" toggleGroup="$mainNavToggleGroup" />
                      </children>
                   </HBox>

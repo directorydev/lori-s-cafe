@@ -580,7 +580,7 @@ public class InventoryController {
     }
 
     private void deleteProduct(Product p) {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Delete " + p.getName() + "?", ButtonType.OK, ButtonType.CANCEL);
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Delete " + p.getName() + "	?", ButtonType.OK, ButtonType.CANCEL);
         if (alert.showAndWait().get() == ButtonType.OK) {
             try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASS);
                  PreparedStatement pstmt = conn.prepareStatement("DELETE FROM products WHERE id = ?")) {
