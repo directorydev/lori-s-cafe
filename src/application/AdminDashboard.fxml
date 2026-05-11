@@ -45,7 +45,8 @@
                         <ToggleButton fx:id="ordersToggle" mnemonicParsing="false" onAction="#showOrders" styleClass="nav-pill" text="Orders" toggleGroup="$mainNavToggleGroup" />
                         <ToggleButton fx:id="analyticsToggle" mnemonicParsing="false" onAction="#handleAnalytics" styleClass="nav-pill" text="Analytics" toggleGroup="$mainNavToggleGroup" />
                         <ToggleButton fx:id="promotionsToggle" mnemonicParsing="false" onAction="#handlePromotions" styleClass="nav-pill" text="Promotions" toggleGroup="$mainNavToggleGroup" />
-                        <ToggleButton fx:id="settingsToggle" mnemonicParsing="false" onAction="#handleSettings" styleClass="nav-pill" text="Settings" toggleGroup="$mainNavToggleGroup" />
+                        
+                        <ToggleButton fx:id="settingsToggle" mnemonicParsing="false" onAction="#handleSettings" styleClass="nav-pill" text="Inventory Logs" toggleGroup="$mainNavToggleGroup" />
                      </children>
                   </HBox>
                </children>
@@ -150,19 +151,21 @@
                               <Label styleClass="card-description" text="Boost sales with smart promotions" />
                            </children>
                         </VBox>
+                        
                         <VBox prefWidth="300.0" spacing="15.0" styleClass="kpi-card, kpi-blue-border" HBox.hgrow="ALWAYS">
                            <children>
                               <HBox alignment="TOP_LEFT" spacing="10.0">
                                  <children>
-                                    <Label style="-fx-text-fill: #3b82f6; -fx-font-weight: bold;" text="Settings" />
+                                    <Label style="-fx-text-fill: #3b82f6; -fx-font-weight: bold;" text="Inventory Logs" />
                                     <Pane HBox.hgrow="ALWAYS" />
-                                    <Label style="-fx-font-size: 20px;" text="⚙️" />
+                                    <Label style="-fx-font-size: 20px;" text="📋" />
                                  </children>
                               </HBox>
-                              <Label styleClass="kpi-value-blue" style="-fx-font-size: 22px;" text="System Configuration" />
-                              <Label styleClass="card-description" text="Adjust system settings" />
+                              <Label styleClass="kpi-value-blue" style="-fx-font-size: 22px;" text="View Movement History" />
+                              <Label styleClass="card-description" text="Track stock deductions and returns" />
                            </children>
                         </VBox>
+                        
                      </children>
                   </HBox>
 

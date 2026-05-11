@@ -30,7 +30,7 @@ public class DashboardController {
     @FXML private VBox dashboardContentArea; 
     
     @FXML private ToggleButton dashboardToggle, posToggle, inventoryToggle, ordersToggle;
-    @FXML private ToggleButton analyticsToggle, promotionsToggle, settingsToggle;
+    @FXML private ToggleButton analyticsToggle, promotionsToggle, inventoryLogsToggle;
     @FXML private ToggleGroup mainNavToggleGroup;
 
     @FXML private Label dateTimeLabel;
