@@ -9,9 +9,10 @@ import java.sql.*;
 
 public class LoginController {
 
-	private static final String DB_URL = "jdbc:postgresql://aws-1-ap-southeast-1.pooler.supabase.com:6543/postgres?sslmode=require";
-	private static final String DB_USER = "postgres.gwjmqejllljupondbzbs";
-	private static final String DB_PASS = "Loritastecafe2026";
+    // FIXED: Added &prepareThreshold=0 to prevent PgBouncer crashes!
+    private static final String DB_URL = "jdbc:postgresql://aws-1-ap-southeast-1.pooler.supabase.com:6543/postgres?sslmode=require&prepareThreshold=0";
+    private static final String DB_USER = "postgres.gwjmqejllljupondbzbs";
+    private static final String DB_PASS = "Loritastecafe2026";
 
     @FXML private TextField usernameField;
     @FXML private PasswordField passwordField;
@@ -44,7 +45,8 @@ public class LoginController {
     }
 
     private boolean authenticate(String user, String pass) {
-        String query = "SELECT password FROM users WHERE username = ? AND role = 'Admin'";
+        // FIXED: Used ILIKE 'Admin' so it works even if the DB says 'admin' or 'ADMIN'
+        String query = "SELECT password FROM users WHERE username = ? AND role ILIKE 'Admin'";
         try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASS);
              PreparedStatement pstmt = conn.prepareStatement(query)) {
             pstmt.setString(1, user);
@@ -52,7 +54,10 @@ public class LoginController {
             if (rs.next()) {
                 return rs.getString("password").equals(pass);
             }
-        } catch (SQLException e) { e.printStackTrace(); }
+        } catch (SQLException e) { 
+            e.printStackTrace(); 
+            System.err.println("DATABASE ERROR: " + e.getMessage());
+        }
         return false;
     }
 
@@ -61,11 +66,12 @@ public class LoginController {
             Parent root = FXMLLoader.load(getClass().getResource(fxmlFile));
             Stage stage = (Stage) usernameField.getScene().getWindow();
             stage.setTitle(title);
-            
-            // --- UPDATED: Maintain Full Window State during transition ---
             stage.getScene().setRoot(root);
             stage.setMaximized(true);
-        } catch (Exception e) { e.printStackTrace(); }
+        } catch (Exception e) { 
+            e.printStackTrace(); 
+            System.err.println("FAILED TO LOAD DASHBOARD: " + e.getMessage());
+        }
     }
 
     private void showAlert(String title, String msg) {
