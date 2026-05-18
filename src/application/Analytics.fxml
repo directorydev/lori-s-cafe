@@ -6,7 +6,9 @@
 <?import javafx.scene.chart.AreaChart?>
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.chart.PieChart?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.GridPane?>
@@ -86,7 +88,7 @@
          <HBox spacing="20.0">
             <VBox style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 4);" HBox.hgrow="ALWAYS">
                <Label style="-fx-font-weight: bold; -fx-font-size: 16px; -fx-text-fill: #111827;" text="Revenue Trajectory" />
-               <AreaChart fx:id="revenueAreaChart" createSymbols="true" horizontalGridLinesVisible="false" prefHeight="350.0" verticalGridLinesVisible="false">
+               <AreaChart fx:id="revenueAreaChart" createSymbols="true" horizontalGridLinesVisible="false" prefHeight="300.0" verticalGridLinesVisible="false">
                  <xAxis><CategoryAxis side="BOTTOM" /></xAxis>
                  <yAxis><NumberAxis side="LEFT" /></yAxis>
                </AreaChart>
@@ -94,7 +96,7 @@
             </VBox>
             <VBox style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 4);" HBox.hgrow="ALWAYS">
                <Label style="-fx-font-weight: bold; -fx-font-size: 16px; -fx-text-fill: #111827;" text="Peak Operational Hours" />
-               <BarChart fx:id="hourlyBarChart" horizontalGridLinesVisible="false" prefHeight="350.0" verticalGridLinesVisible="false">
+               <BarChart fx:id="hourlyBarChart" horizontalGridLinesVisible="false" prefHeight="300.0" verticalGridLinesVisible="false">
                  <xAxis><CategoryAxis side="BOTTOM" /></xAxis>
                  <yAxis><NumberAxis side="LEFT" /></yAxis>
                </BarChart>
@@ -105,16 +107,24 @@
          <Label style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #374151; -fx-padding: 10 0 0 0;" text="2. Product &amp; Category Matrix (What)" />
          <HBox spacing="20.0">
             <VBox style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 4);" HBox.hgrow="ALWAYS">
-               <Label style="-fx-font-weight: bold; -fx-font-size: 16px; -fx-text-fill: #111827;" text="Top Selling Products (Top 5)" />
-               <BarChart fx:id="topProductsBarChart" horizontalGridLinesVisible="false" prefHeight="350.0" verticalGridLinesVisible="false">
+               <Label style="-fx-font-weight: bold; -fx-font-size: 16px; -fx-text-fill: #111827;" text="Top Selling Products" />
+               <BarChart fx:id="topProductsBarChart" horizontalGridLinesVisible="false" prefHeight="300.0" verticalGridLinesVisible="false">
                  <xAxis><CategoryAxis side="BOTTOM" /></xAxis>
                  <yAxis><NumberAxis side="LEFT" /></yAxis>
                </BarChart>
                <Label fx:id="topProdChartSummary" wrapText="true" style="-fx-font-size: 13px; -fx-text-fill: #4b5563; -fx-padding: 10; -fx-background-color: #f9fafb; -fx-background-radius: 5;" text="Loading summary..." />
             </VBox>
             <VBox style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 4);" HBox.hgrow="ALWAYS">
+               <Label style="-fx-font-weight: bold; -fx-font-size: 16px; -fx-text-fill: #111827;" text="Highest Profit Margins (%)" />
+               <BarChart fx:id="profitMarginChart" horizontalGridLinesVisible="false" prefHeight="300.0" verticalGridLinesVisible="false">
+                 <xAxis><CategoryAxis side="BOTTOM" /></xAxis>
+                 <yAxis><NumberAxis side="LEFT" /></yAxis>
+               </BarChart>
+               <Label fx:id="profitMarginSummary" wrapText="true" style="-fx-font-size: 13px; -fx-text-fill: #4b5563; -fx-padding: 10; -fx-background-color: #f0fdf4; -fx-background-radius: 5;" text="Loading margins..." />
+            </VBox>
+            <VBox style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 4);" HBox.hgrow="ALWAYS">
                <Label style="-fx-font-weight: bold; -fx-font-size: 16px; -fx-text-fill: #111827;" text="Revenue by Category" />
-               <PieChart fx:id="categoryRevPieChart" prefHeight="350.0" />
+               <PieChart fx:id="categoryRevPieChart" prefHeight="300.0" />
                <Label fx:id="catChartSummary" wrapText="true" style="-fx-font-size: 13px; -fx-text-fill: #4b5563; -fx-padding: 10; -fx-background-color: #f9fafb; -fx-background-radius: 5;" text="Loading summary..." />
             </VBox>
          </HBox>
@@ -123,7 +133,7 @@
          <HBox spacing="20.0">
             <VBox style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 4);" HBox.hgrow="ALWAYS">
                <Label style="-fx-font-weight: bold; -fx-font-size: 16px; -fx-text-fill: #111827;" text="Cashier Leaderboard (Revenue &amp; AOV)" />
-               <BarChart fx:id="cashierBarChart" horizontalGridLinesVisible="false" prefHeight="350.0" verticalGridLinesVisible="false">
+               <BarChart fx:id="cashierBarChart" horizontalGridLinesVisible="false" prefHeight="300.0" verticalGridLinesVisible="false">
                  <xAxis><CategoryAxis side="BOTTOM" /></xAxis>
                  <yAxis><NumberAxis side="LEFT" /></yAxis>
                </BarChart>
@@ -131,12 +141,39 @@
             </VBox>
             <VBox style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 4);" HBox.hgrow="ALWAYS">
                <Label style="-fx-font-weight: bold; -fx-font-size: 16px; -fx-text-fill: #111827;" text="Order Type Distribution" />
-               <PieChart fx:id="orderTypePieChart" prefHeight="350.0" />
+               <PieChart fx:id="orderTypePieChart" prefHeight="300.0" />
                <Label fx:id="orderTypeChartSummary" wrapText="true" style="-fx-font-size: 13px; -fx-text-fill: #4b5563; -fx-padding: 10; -fx-background-color: #f9fafb; -background-radius: 5;" text="Loading summary..." />
             </VBox>
          </HBox>
+         <HBox spacing="20.0">
+            <VBox style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 4);" HBox.hgrow="ALWAYS">
+               <Label style="-fx-font-weight: bold; -fx-font-size: 16px; -fx-text-fill: #111827;" text="Cashier Trust Score (Lost to Voids)" />
+               <BarChart fx:id="cashierVoidChart" horizontalGridLinesVisible="false" prefHeight="300.0" verticalGridLinesVisible="false">
+                 <xAxis><CategoryAxis side="BOTTOM" /></xAxis>
+                 <yAxis><NumberAxis side="LEFT" /></yAxis>
+               </BarChart>
+               <Label fx:id="cashierVoidSummary" wrapText="true" style="-fx-font-size: 13px; -fx-text-fill: #4b5563; -fx-padding: 10; -fx-background-color: #fef2f2; -fx-background-radius: 5;" text="Loading summary..." />
+            </VBox>
+            <VBox style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 4);" HBox.hgrow="ALWAYS">
+               <Label style="-fx-font-weight: bold; -fx-font-size: 16px; -fx-text-fill: #111827;" text="Payment Channel Distribution" />
+               <PieChart fx:id="paymentMethodPieChart" prefHeight="300.0" />
+               <Label fx:id="paymentMethodSummary" wrapText="true" style="-fx-font-size: 13px; -fx-text-fill: #4b5563; -fx-padding: 10; -fx-background-color: #f9fafb; -background-radius: 5;" text="Loading summary..." />
+            </VBox>
+         </HBox>
 
-         <Label style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #374151; -fx-padding: 10 0 0 0;" text="4. Comprehensive Category Breakdown (Drill-Down)" />
+         <Label style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #374151; -fx-padding: 10 0 0 0;" text="4. Inventory Intelligence (Burn Rate)" />
+         <HBox spacing="20.0">
+            <VBox style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 4);" HBox.hgrow="ALWAYS">
+               <Label style="-fx-font-weight: bold; -fx-font-size: 16px; -fx-text-fill: #111827;" text="Fastest Depleting Raw Materials (Units Burned)" />
+               <BarChart fx:id="inventoryBurnChart" horizontalGridLinesVisible="true" prefHeight="300.0" verticalGridLinesVisible="false">
+                 <xAxis><CategoryAxis side="BOTTOM" /></xAxis>
+                 <yAxis><NumberAxis side="LEFT" /></yAxis>
+               </BarChart>
+               <Label fx:id="inventoryBurnSummary" wrapText="true" style="-fx-font-size: 13px; -fx-text-fill: #4b5563; -fx-padding: 10; -fx-background-color: #fffbeb; -fx-background-radius: 5;" text="Loading inventory movement..." />
+            </VBox>
+         </HBox>
+
+         <Label style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #374151; -fx-padding: 10 0 0 0;" text="5. Comprehensive Category Breakdown (Drill-Down)" />
          <VBox style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 4);" spacing="20.0">
             <HBox alignment="CENTER_LEFT" spacing="15.0">
                 <Label style="-fx-font-weight: bold; -fx-font-size: 16px; -fx-text-fill: #111827;" text="Category Performance Audit" />
@@ -168,6 +205,105 @@
               <yAxis><NumberAxis side="LEFT" /></yAxis>
             </BarChart>
             <Label fx:id="categoryDrillDownSummary" wrapText="true" style="-fx-font-size: 13px; -fx-text-fill: #4b5563; -fx-padding: 10; -fx-background-color: #f9fafb; -fx-background-radius: 5;" text="Select a category above to view its complete financial breakdown." />
+         </VBox>
+         
+         <Label style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #374151; -fx-padding: 10 0 0 0;" text="6. Historical Data Audit (Custom Period Viewer)" />
+         <VBox style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 4);" spacing="20.0">
+            
+            <HBox alignment="CENTER_LEFT" spacing="15.0">
+                <Label style="-fx-font-weight: bold; -fx-font-size: 16px; -fx-text-fill: #111827;" text="Select Custom Timeline" />
+                <Pane HBox.hgrow="ALWAYS" />
+                <Label text="Audit Scope:" style="-fx-font-size: 14px; -fx-text-fill: #6b7280; -fx-font-weight: bold;" />
+                <ComboBox fx:id="auditModeCombo" prefWidth="130.0" style="-fx-font-size: 13px; -fx-background-color: #f9fafb; -fx-border-color: #d1d5db; -fx-border-radius: 5;" />
+                
+                <Label text="From Date:" style="-fx-font-size: 14px; -fx-text-fill: #6b7280; -fx-font-weight: bold;" />
+                <DatePicker fx:id="historyStartDate" prefWidth="130.0" style="-fx-font-size: 13px;" />
+                
+                <Label fx:id="endDateLabel" text="End Date:" style="-fx-font-size: 14px; -fx-text-fill: #6b7280; -fx-font-weight: bold;" />
+                <DatePicker fx:id="historyEndDate" prefWidth="130.0" style="-fx-font-size: 13px;" />
+                
+                <Button onAction="#loadHistoricalData" style="-fx-background-color: #1f2937; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5; -fx-cursor: hand; -fx-padding: 8 15;" text="Generate Report" />
+            </HBox>
+
+            <HBox spacing="15.0">
+                <VBox style="-fx-background-color: #f9fafb; -fx-padding: 15; -fx-border-color: #e5e7eb; -fx-border-radius: 8; -fx-background-radius: 8;" HBox.hgrow="ALWAYS">
+                    <Label text="Historical Gross Sales" style="-fx-font-size: 12px; -fx-text-fill: #6b7280; -fx-font-weight: bold;"/>
+                    <Label fx:id="histGrossLabel" text="₱0.00" style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #1f2937;"/>
+                    <Label fx:id="histGrossTrend" text="-- vs previous period" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #6b7280;"/>
+                </VBox>
+                <VBox style="-fx-background-color: #fef2f2; -fx-padding: 15; -fx-border-color: #fca5a5; -fx-border-radius: 8; -fx-background-radius: 8;" HBox.hgrow="ALWAYS">
+                    <Label text="Historical COGS" style="-fx-font-size: 12px; -fx-text-fill: #be123c; -fx-font-weight: bold;"/>
+                    <Label fx:id="histCogsLabel" text="₱0.00" style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #be123c;"/>
+                    <Label fx:id="histCogsTrend" text="-- vs previous period" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #be123c;"/>
+                </VBox>
+                <VBox style="-fx-background-color: #fffbeb; -fx-padding: 15; -fx-border-color: #fcd34d; -fx-border-radius: 8; -fx-background-radius: 8;" HBox.hgrow="ALWAYS">
+                    <Label text="Historical Net Profit" style="-fx-font-size: 12px; -fx-text-fill: #d97706; -fx-font-weight: bold;"/>
+                    <Label fx:id="histNetLabel" text="₱0.00" style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #d97706;"/>
+                    <Label fx:id="histNetTrend" text="-- vs previous period" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #d97706;"/>
+                </VBox>
+                <VBox style="-fx-background-color: #f9fafb; -fx-padding: 15; -fx-border-color: #e5e7eb; -fx-border-radius: 8; -fx-background-radius: 8;" HBox.hgrow="ALWAYS">
+                    <Label text="Historical Transactions" style="-fx-font-size: 12px; -fx-text-fill: #6b7280; -fx-font-weight: bold;"/>
+                    <Label fx:id="histOrdersLabel" text="0" style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #1f2937;"/>
+                    <Label fx:id="histOrdersTrend" text="-- vs previous period" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #6b7280;"/>
+                </VBox>
+            </HBox>
+
+            <HBox spacing="15.0">
+                <VBox style="-fx-background-color: #f9fafb; -fx-padding: 15; -fx-border-color: #e5e7eb; -fx-border-radius: 8; -fx-background-radius: 8;" HBox.hgrow="ALWAYS">
+                    <Label text="Average Order Value (AOV)" style="-fx-font-size: 12px; -fx-text-fill: #6b7280; -fx-font-weight: bold;"/>
+                    <Label fx:id="histAovLabel" text="₱0.00" style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #1f2937;"/>
+                    <Label fx:id="histAovTrend" text="-- vs previous period" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #6b7280;"/>
+                </VBox>
+                <VBox style="-fx-background-color: #fef2f2; -fx-padding: 15; -fx-border-color: #fca5a5; -fx-border-radius: 8; -fx-background-radius: 8;" HBox.hgrow="ALWAYS">
+                    <Label text="Voided / Lost Revenue" style="-fx-font-size: 12px; -fx-text-fill: #be123c; -fx-font-weight: bold;"/>
+                    <Label fx:id="histVoidLabel" text="₱0.00" style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #be123c;"/>
+                    <Label fx:id="histVoidTrend" text="-- vs previous period" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #be123c;"/>
+                </VBox>
+                <VBox style="-fx-background-color: #f0fdf4; -fx-padding: 15; -fx-border-color: #86efac; -fx-border-radius: 8; -fx-background-radius: 8;" HBox.hgrow="ALWAYS">
+                    <Label text="Peak Traffic Hour" style="-fx-font-size: 12px; -fx-text-fill: #166534; -fx-font-weight: bold;"/>
+                    <Label fx:id="histPeakLabel" text="N/A" style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #166534;"/>
+                    <Label text="Most frequent sales time" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #15803d;"/>
+                </VBox>
+                <VBox style="-fx-background-color: #eff6ff; -fx-padding: 15; -fx-border-color: #93c5fd; -fx-border-radius: 8; -fx-background-radius: 8;" HBox.hgrow="ALWAYS">
+                    <Label text="Period Top Performer" style="-fx-font-size: 12px; -fx-text-fill: #1e40af; -fx-font-weight: bold;"/>
+                    <Label fx:id="histTopItemLabel" text="N/A" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #1e3a8a;" wrapText="true"/>
+                    <Label fx:id="histTopItemQtyLabel" text="0 units sold" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #1d4ed8;"/>
+                </VBox>
+            </HBox>
+
+            <VBox spacing="10.0" style="-fx-background-color: #f9fafb; -fx-padding: 15; -fx-border-color: #e5e7eb; -fx-border-radius: 8;">
+                <Label fx:id="histExplanationLabel" text="Select a scope and click Generate Report to view the comparative data audit." style="-fx-font-size: 13px; -fx-text-fill: #4b5563; -fx-font-style: italic;" wrapText="true"/>
+                <BarChart fx:id="historicalComparisonChart" prefHeight="300.0" horizontalGridLinesVisible="true" verticalGridLinesVisible="false">
+                  <xAxis><CategoryAxis side="BOTTOM" /></xAxis>
+                  <yAxis><NumberAxis side="LEFT" /></yAxis>
+                </BarChart>
+            </VBox>
+
+            <Label text="Deep Dive Visualizations (Selected Period)" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #4b5563; -fx-padding: 10 0 0 0;" />
+            <HBox spacing="15.0">
+                <VBox style="-fx-background-color: white; -fx-padding: 15; -fx-border-color: #e5e7eb; -fx-border-radius: 8;" HBox.hgrow="ALWAYS">
+                    <Label text="AOV &amp; Void Comparison" style="-fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: #111827;" />
+                    <BarChart fx:id="histSecondaryChart" prefHeight="250.0" horizontalGridLinesVisible="true" verticalGridLinesVisible="false">
+                        <xAxis><CategoryAxis side="BOTTOM" /></xAxis>
+                        <yAxis><NumberAxis side="LEFT" /></yAxis>
+                    </BarChart>
+                </VBox>
+                <VBox style="-fx-background-color: white; -fx-padding: 15; -fx-border-color: #e5e7eb; -fx-border-radius: 8;" HBox.hgrow="ALWAYS">
+                    <Label text="Hourly Traffic Heatmap" style="-fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: #111827;" />
+                    <BarChart fx:id="histHourlyChart" prefHeight="250.0" horizontalGridLinesVisible="true" verticalGridLinesVisible="false">
+                        <xAxis><CategoryAxis side="BOTTOM" /></xAxis>
+                        <yAxis><NumberAxis side="LEFT" /></yAxis>
+                    </BarChart>
+                </VBox>
+                <VBox style="-fx-background-color: white; -fx-padding: 15; -fx-border-color: #e5e7eb; -fx-border-radius: 8;" HBox.hgrow="ALWAYS">
+                    <Label text="Top 5 Leaderboard" style="-fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: #111827;" />
+                    <BarChart fx:id="histTopItemChart" prefHeight="250.0" horizontalGridLinesVisible="true" verticalGridLinesVisible="false">
+                        <xAxis><CategoryAxis side="BOTTOM" /></xAxis>
+                        <yAxis><NumberAxis side="LEFT" /></yAxis>
+                    </BarChart>
+                </VBox>
+            </HBox>
+
          </VBox>
 
       </VBox>

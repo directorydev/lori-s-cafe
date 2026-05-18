@@ -2,6 +2,8 @@ package application;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -19,6 +21,9 @@ public class OrdersController {
     @FXML private TableColumn<Order, String> colStatus;
     
     @FXML private ComboBox<String> statusFilterCombo;
+    @FXML private TextField searchField; // NEW: Search Bar
+
+    private ObservableList<Order> masterOrderList = FXCollections.observableArrayList();
 
     private static final String DB_URL = "jdbc:postgresql://aws-1-ap-southeast-1.pooler.supabase.com:6543/postgres?sslmode=require&prepareThreshold=0";
     private static final String DB_USER = "postgres.gwjmqejllljupondbzbs";
@@ -26,17 +31,36 @@ public class OrdersController {
 
     @FXML
     public void initialize() {
-        // Map Table Columns to the Order model properties
+        // Map Table Columns to the cleaned-up Order model properties
         colId.setCellValueFactory(new PropertyValueFactory<>("orderId"));
         colDate.setCellValueFactory(new PropertyValueFactory<>("date"));
-        colCashier.setCellValueFactory(new PropertyValueFactory<>("customerDetails")); // Repurposed for Cashier Name
+        colCashier.setCellValueFactory(new PropertyValueFactory<>("cashierName"));
         colTotal.setCellValueFactory(cellData -> 
             new javafx.beans.property.SimpleStringProperty("₱" + String.format("%,.2f", cellData.getValue().getTotalAmount()))
         );
         colPayment.setCellValueFactory(new PropertyValueFactory<>("paymentMethod"));
-        
-        // Add a visual Status column
-        colStatus.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty( ((OrderWithStatus) cellData.getValue()).getStatus() ));
+        colStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
+
+        // Add colors to the Status column!
+        colStatus.setCellFactory(column -> new TableCell<Order, String>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                    setStyle("");
+                } else {
+                    setText(item);
+                    if (item.equals("Completed")) {
+                        setStyle("-fx-text-fill: #10b981; -fx-font-weight: bold;"); // Green
+                    } else if (item.equals("Voided")) {
+                        setStyle("-fx-text-fill: #ef4444; -fx-font-weight: bold;"); // Red
+                    } else {
+                        setStyle("-fx-text-fill: #f59e0b; -fx-font-weight: bold;"); // Orange
+                    }
+                }
+            }
+        });
 
         statusFilterCombo.getItems().addAll("All Orders", "Completed", "Pending", "For Void", "Voided");
         statusFilterCombo.getSelectionModel().select("All Orders");
@@ -47,7 +71,7 @@ public class OrdersController {
 
     @FXML
     public void loadOrders() {
-        ObservableList<Order> orderList = FXCollections.observableArrayList();
+        masterOrderList.clear();
         String filter = statusFilterCombo.getValue();
         
         String sql = "SELECT id, order_date, cashier_name, total_amount, payment_method, status FROM transactions";
@@ -69,22 +93,44 @@ public class OrdersController {
                 String cashier = rs.getString("cashier_name") != null ? rs.getString("cashier_name") : "Unknown";
                 String status = rs.getString("status") != null ? rs.getString("status") : "Completed";
 
-                // We are reusing the customerDetails property in your Order.java model to hold the cashier/status info for now
-                Order order = new Order(
+                // Using the clean, updated Order model
+                masterOrderList.add(new Order(
                     rs.getInt("id"),
                     formattedDate,
                     cashier, 
                     rs.getDouble("total_amount"),
-                    rs.getString("payment_method")
-                );
-                // Temporarily inject status into the Order class dynamically
-                orderList.add(new OrderWithStatus(order, status));
+                    rs.getString("payment_method"),
+                    status
+                ));
             }
-            ordersTable.setItems(orderList);
+            
+            // Apply the Live Search Logic
+            setupSearchFilter();
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    private void setupSearchFilter() {
+        FilteredList<Order> filteredData = new FilteredList<>(masterOrderList, b -> true);
+        
+        searchField.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredData.setPredicate(order -> {
+                if (newValue == null || newValue.isEmpty()) return true;
+                
+                String lowerCaseFilter = newValue.toLowerCase();
+                
+                if (String.valueOf(order.getOrderId()).contains(lowerCaseFilter)) return true;
+                if (order.getCashierName().toLowerCase().contains(lowerCaseFilter)) return true;
+                
+                return false; // Does not match
+            });
+        });
+        
+        SortedList<Order> sortedData = new SortedList<>(filteredData);
+        sortedData.comparatorProperty().bind(ordersTable.comparatorProperty());
+        ordersTable.setItems(sortedData);
     }
 
     @FXML
@@ -94,8 +140,33 @@ public class OrdersController {
             showAlert("No Selection", "Please select an order from the list first.");
             return;
         }
-        System.out.println("Opening receipt details for Order ID: " + selected.getOrderId());
-        // TODO: Launch a modal showing transaction_items for this order ID
+
+        try {
+            // Using absolute classpath mapping to prevent Location is not set errors
+            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/application/ReceiptModal.fxml"));
+            javafx.scene.Parent root = loader.load();
+            
+            // Pass the selected order data to the receipt controller
+            ReceiptModalController controller = loader.getController();
+            controller.initData(selected);
+
+            // Create a pop-up window (Stage)
+            javafx.stage.Stage stage = new javafx.stage.Stage();
+            stage.initModality(javafx.stage.Modality.APPLICATION_MODAL); // Blocks clicking the main window
+            stage.setTitle("Digital Receipt - Order #" + selected.getOrderId());
+            
+            // Ensure the window background is transparent so the drop shadow looks like real paper
+            javafx.scene.Scene scene = new javafx.scene.Scene(root);
+            scene.setFill(javafx.scene.paint.Color.TRANSPARENT);
+            stage.initStyle(javafx.stage.StageStyle.TRANSPARENT);
+            
+            stage.setScene(scene);
+            stage.showAndWait();
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Error", "Could not load the receipt modal.");
+        }
     }
 
     @FXML
@@ -106,7 +177,7 @@ public class OrdersController {
             return;
         }
 
-        if (selected instanceof OrderWithStatus && "Voided".equals(((OrderWithStatus) selected).getStatus())) {
+        if ("Voided".equals(selected.getStatus())) {
             showAlert("Already Voided", "This order has already been voided.");
             return;
         }
@@ -131,7 +202,7 @@ public class OrdersController {
                 // and UPDATE raw_materials SET current_stock = current_stock + (returned amounts)
                 
                 conn.commit();
-                loadOrders(); // Refresh table
+                loadOrders(); // Refresh table immediately
                 
                 Alert success = new Alert(Alert.AlertType.INFORMATION, "Order #" + orderId + " successfully voided.");
                 success.showAndWait();
@@ -151,15 +222,5 @@ public class OrdersController {
         alert.setHeaderText(null);
         alert.setContentText(msg);
         alert.showAndWait();
-    }
-
-    // Temporary helper class to extend your existing Order model without breaking other code
-    public static class OrderWithStatus extends Order {
-        private final String status;
-        public OrderWithStatus(Order base, String status) {
-            super(base.getOrderId(), base.getDate(), base.getCustomerDetails(), base.getTotalAmount(), base.getPaymentMethod());
-            this.status = status;
-        }
-        public String getStatus() { return status; }
     }
 }

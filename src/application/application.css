@@ -284,3 +284,37 @@
     -fx-scale-x: 1.05;
     -fx-scale-y: 1.05;
 }
+/* --- DIGITAL RECEIPT MODAL --- */
+.receipt-paper {
+    -fx-background-color: white;
+    -fx-padding: 30px;
+    /* Gives the illusion of a floating piece of paper */
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 20, 0, 0, 10);
+}
+.receipt-text {
+    -fx-font-family: "Courier New", Consolas, monospace;
+    -fx-font-size: 14px;
+    -fx-text-fill: #111827;
+}
+.receipt-title {
+    -fx-font-family: "Courier New", Consolas, monospace;
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #111827;
+}
+.receipt-dashed {
+    -fx-font-family: "Courier New", Consolas, monospace;
+    -fx-font-size: 14px;
+    -fx-text-fill: #9ca3af;
+}
+.receipt-bold {
+    -fx-font-weight: bold;
+}
+
+/* Enhances the Table Selection so it's obvious which order is selected */
+.table-view .table-row-cell:selected {
+    -fx-background-color: #e5e7eb;
+}
+.table-view .table-row-cell:selected .text {
+    -fx-fill: #111827;
+}

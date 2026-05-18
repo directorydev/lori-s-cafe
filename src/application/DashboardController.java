@@ -123,7 +123,7 @@ public class DashboardController {
     @FXML 
     public void handleSettings() { 
         if (settingsToggle != null) settingsToggle.setSelected(true);
-        loadCenterPage("Settings.fxml"); 
+        loadCenterPage("InventoryLogs.fxml"); 
     }
     
     @FXML 
