@@ -43,7 +43,6 @@ public class SettingsController {
     }
 
     private void setupFilters() {
-        // REMOVED: Manual Restock option
         typeCombo.getItems().addAll("All Log Types", "Sale Deduction", "Void / Return");
         typeCombo.getSelectionModel().selectFirst();
         typeCombo.setOnAction(e -> refreshData());
@@ -69,7 +68,6 @@ public class SettingsController {
                 } else { 
                     setText(String.format("%+.2f", amount)); 
                     
-                    // FIXED COLOR LOGIC:
                     if (amount < 0) {
                         setStyle("-fx-text-fill: #dc2626; -fx-font-weight: bold;"); // Red for negative
                     } else if (amount > 0) {
@@ -142,7 +140,9 @@ public class SettingsController {
                 String type = rs.getString("type");
                 
                 String formattedDate = date != null ? sdf.format(date) : "N/A";
-                masterLogList.add(new InventoryLog(id, formattedDate, material, amount, type));
+                
+                // FIXED: Added "System" as the 6th parameter to match the updated InventoryLog model
+                masterLogList.add(new InventoryLog(id, formattedDate, material, amount, type, "System"));
                 
                 totalLogs++;
                 if (amount < 0) totalDeductions++;
