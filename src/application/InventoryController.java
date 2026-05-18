@@ -69,6 +69,21 @@ public class InventoryController {
             productGrid.setVgap(15);
             if (isProductMode) refreshInventory(); else refreshRawMaterials();
         }
+
+        // --- NEW: DYNAMIC PERMISSION ENFORCEMENT ---
+        applyRoleBasedRestrictions();
+    }
+
+    private void applyRoleBasedRestrictions() {
+        if (UserSession.isActive() && UserSession.isInventoryStaff()) {
+            // 1. Hide administrative entry buttons if present in your fxml layout
+            if (addItemBtn != null) {
+                addItemBtn.setVisible(false);
+                addItemBtn.setManaged(false); // Removes the item's whitespace footprint from the UI
+            }
+            
+            System.out.println("Role Restrictions Applied: Destructive actions disabled for Inventory Staff.");
+        }
     }
 
     private void setupTabListeners() {

@@ -13,6 +13,7 @@ import javafx.util.Duration;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.net.URL;
 
 public class DashboardController {
 
@@ -31,7 +32,7 @@ public class DashboardController {
     @FXML private Label todaySalesLabel;
     @FXML private Label todayOrdersLabel;
 
-    // FIXED: Added &prepareThreshold=0
+    // Fixed: Using prepareThreshold=0 to bypass Supabase PgBouncer "Prepared Statement already exists" errors
     private static final String DB_URL = "jdbc:postgresql://aws-1-ap-southeast-1.pooler.supabase.com:6543/postgres?sslmode=require&prepareThreshold=0";
     private static final String DB_USER = "postgres.gwjmqejllljupondbzbs";
     private static final String DB_PASS = "Loritastecafe2026";	
@@ -40,6 +41,11 @@ public class DashboardController {
     public void initialize() {
         startClock();
         refreshDashboardStats();
+        
+        // Auto-refresh stats every 30 seconds to sync with Mobile POS sales in real-time
+        Timeline refreshTimer = new Timeline(new KeyFrame(Duration.seconds(30), e -> refreshDashboardStats()));
+        refreshTimer.setCycleCount(Animation.INDEFINITE);
+        refreshTimer.play();
     }
 
     private void startClock() {
@@ -50,13 +56,19 @@ public class DashboardController {
         clock.play();
     }
 
+    /**
+     * Synchronizes Dashboard KPI cards with Supabase in real-time.
+     */
     private void refreshDashboardStats() {
         try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASS)) {
+            
+            // 1. Fetch Total Raw Material Inventory
             String invSql = "SELECT SUM(current_stock) FROM raw_materials";
             try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(invSql)) {
                 if (rs.next()) totalInventoryLabel.setText(String.format("%.0f", rs.getDouble(1)));
             }
 
+            // 2. Fetch Today's Revenue and Order Count
             String salesSql = "SELECT SUM(total_amount), COUNT(id) FROM transactions WHERE DATE(order_date) = CURRENT_DATE";
             try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(salesSql)) {
                 if (rs.next()) {
@@ -65,11 +77,11 @@ public class DashboardController {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.err.println("Database Sync Error: " + e.getMessage());
         }
     }
 
-    // --- CARD CLICK HANDLERS (Now with Navbar Sync) ---
+    // --- CARD CLICK HANDLERS (With Navbar Sync) ---
 
     @FXML
     private void handleCardInventory() {
@@ -84,22 +96,37 @@ public class DashboardController {
     }
 
     @FXML
+    private void handleCardAnalytics() {
+        if (analyticsToggle != null) analyticsToggle.setSelected(true);
+        loadCenterPage("Analytics.fxml");
+    }
+
+    @FXML
     private void handleCardLogs() {
         if (settingsToggle != null) settingsToggle.setSelected(true); 
-        loadCenterPage("Settings.fxml"); // This is your Inventory Logs
+        loadCenterPage("Settings.fxml"); // Maps to your Inventory Logs / Settings view
     }
 
     @FXML
     private void handleStartSale() {
         System.out.println("Opening Cashier POS...");
+        loadCenterPage("POS.fxml"); 
     }
 
-    // --- RESTORED TOP NAV BAR ACTIONS ---
+    // --- TOP NAV BAR ACTIONS ---
 
     @FXML 
     public void showDashboard() { 
         if (dashboardToggle != null) dashboardToggle.setSelected(true);
-        // Add logic to reload the main dashboard VBox if needed
+        try {
+            Parent dashboardRoot = FXMLLoader.load(getClass().getResource("AdminDashboard.fxml"));
+            if (mainContainer.getScene() != null) {
+                mainContainer.getScene().setRoot(dashboardRoot);
+            }
+        } catch (Exception e) { 
+            System.err.println("Error reloading dashboard view: " + e.getMessage());
+            e.printStackTrace(); 
+        }
     }
 
     @FXML 
@@ -128,18 +155,36 @@ public class DashboardController {
     
     @FXML 
     public void handleLogout() { 
-        System.exit(0); 
+        try {
+            Parent loginView = FXMLLoader.load(getClass().getResource("Login.fxml"));
+            if (mainContainer.getScene() != null) {
+                mainContainer.getScene().setRoot(loginView);
+            } else {
+                System.exit(0);
+            }
+        } catch (Exception e) { 
+            System.exit(0); 
+        }
     }
 
-    // --- HELPER METHOD ---
+    // --- ROBUST HELPER METHOD FOR INTERNAL VIEWS ---
     private void loadCenterPage(String fxml) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxml));
+            URL url = getClass().getResource(fxml);
+            if (url == null) {
+                url = getClass().getResource("/application/" + fxml);
+            }
+            
+            if (url == null) {
+                throw new java.io.IOException("Cannot find resource: " + fxml);
+            }
+
+            FXMLLoader loader = new FXMLLoader(url);
             Parent root = loader.load();
             mainContainer.setCenter(root);
         } catch (Exception e) {
-            System.err.println("Error loading " + fxml + ": " + e.getMessage());
-            e.printStackTrace(); 
+            System.err.println("Critical Navigation Error loading " + fxml + ": " + e.getMessage());
+            e.printStackTrace();
         }
     }
 }

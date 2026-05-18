@@ -26,22 +26,22 @@
 
             <VBox alignment="CENTER" spacing="5.0">
                <children>
-                  <Label styleClass="header-title" text="Admin Portal" />
+                  <Label styleClass="header-title" text="Inventory System" />
                   <Label styleClass="header-subtitle" text="Authorized Personnel Only" />
                </children>
             </VBox>
 
-            <VBox spacing="15.0">
+            <VBox spacing="20.0">
                <children>
                   <VBox spacing="5.0">
                      <children>
-                        <Label styleClass="input-label" text="Admin Username" />
+                        <Label styleClass="input-label" text="Username:" />
                         <TextField fx:id="usernameField" promptText="Enter admin username" styleClass="custom-input" />
                      </children>
                   </VBox>
                   <VBox spacing="5.0">
                      <children>
-                        <Label styleClass="input-label" text="Password" />
+                        <Label styleClass="input-label" text="Password:" />
                         <PasswordField fx:id="passwordField" promptText="Enter password" styleClass="custom-input" />
                      </children>
                   </VBox>
@@ -54,22 +54,6 @@
                </children>
             </VBox>
             
-            <VBox fx:id="demoAccountsBox" spacing="10.0" styleClass="demo-box">
-               <children>
-                  <Label styleClass="demo-header" text="Demo Account:" />
-                  <HBox alignment="CENTER_LEFT" spacing="15.0" styleClass="demo-inner-box">
-                     <children>
-                        <VBox spacing="2.0">
-                           <children>
-                              <Label fx:id="demoUserLabel" styleClass="demo-info-label" text="Admin: admin" />
-                              <Label fx:id="demoPassLabel" prefHeight="18.0" prefWidth="135.0" styleClass="demo-info-label" text="Password: admin" />
-                           </children>
-                        </VBox>
-                        <Button fx:id="useDemoAccountButton" mnemonicParsing="false" onAction="#handleUseDemoAccount" prefHeight="32.0" prefWidth="150.0" styleClass="demo-btn" text="Auto-fill" />
-                     </children>
-                  </HBox>
-               </children>
-            </VBox>
          </children>
       </VBox>
    </children>
