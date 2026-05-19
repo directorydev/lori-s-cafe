@@ -44,7 +44,7 @@
                         <ToggleButton fx:id="inventoryToggle" mnemonicParsing="false" onAction="#showInventory" styleClass="nav-pill" text="Inventory" toggleGroup="$mainNavToggleGroup" />
                         <ToggleButton fx:id="ordersToggle" mnemonicParsing="false" onAction="#showOrders" styleClass="nav-pill" text="Orders" toggleGroup="$mainNavToggleGroup" />
                         <ToggleButton fx:id="analyticsToggle" mnemonicParsing="false" onAction="#handleAnalytics" styleClass="nav-pill" text="Analytics" toggleGroup="$mainNavToggleGroup" />
-                        <ToggleButton fx:id="settingsToggle" mnemonicParsing="false" onAction="#handleSettings" styleClass="nav-pill" text="Inventory Logs" toggleGroup="$mainNavToggleGroup" />
+                        <ToggleButton fx:id="settingsToggle" mnemonicParsing="false" onAction="#handleSettings" styleClass="nav-pill" text="Logs" toggleGroup="$mainNavToggleGroup" />
                      </children>
                   </HBox>
                </children>
@@ -95,7 +95,7 @@
                                  <children>
                                     <Label style="-fx-text-fill: #8b5cf6; -fx-font-weight: bold;" text="Today's Sales" />
                                     <Pane HBox.hgrow="ALWAYS" />
-                                    <Label style="-fx-font-size: 20px;" text="📊" />
+                                    <Label style="-fx-font-size: 20px;" text="📈" />
                                  </children>
                               </HBox>
                               <Label fx:id="todaySalesLabel" styleClass="kpi-value-purple" text="₱0.00" />
@@ -113,7 +113,7 @@
                                  <children>
                                     <Label style="-fx-text-fill: #f97316; -fx-font-weight: bold;" text="Orders" />
                                     <Pane HBox.hgrow="ALWAYS" />
-                                    <Label style="-fx-font-size: 20px;" text="🏷️" />
+                                    <Label style="-fx-font-size: 20px;" text="🧾" />
                                  </children>
                               </HBox>
                               <Label fx:id="todayOrdersLabel" styleClass="kpi-value-orange" text="0" />
@@ -125,13 +125,13 @@
                            <children>
                               <HBox alignment="TOP_LEFT" spacing="10.0">
                                  <children>
-                                    <Label style="-fx-text-fill: #3b82f6; -fx-font-weight: bold;" text="Inventory Logs" />
+                                    <Label style="-fx-text-fill: #3b82f6; -fx-font-weight: bold;" text="Master Logs" />
                                     <Pane HBox.hgrow="ALWAYS" />
-                                    <Label style="-fx-font-size: 20px;" text="📋" />
+                                    <Label style="-fx-font-size: 20px;" text="🛡️" />
                                  </children>
                               </HBox>
-                              <Label styleClass="kpi-value-blue" style="-fx-font-size: 22px;" text="Movement History" />
-                              <Label styleClass="card-description" text="Track deductions and returns" />
+                              <Label styleClass="kpi-value-blue" style="-fx-font-size: 22px;" text="System Audit Trail" />
+                              <Label styleClass="card-description" text="Track all global system events" />
                            </children>
                         </VBox>
                      </children>

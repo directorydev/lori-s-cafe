@@ -20,19 +20,16 @@ public class DashboardController {
     @FXML private BorderPane mainContainer; 
     @FXML private Label dateTimeLabel;
     
-    // Navbar Toggles (To sync bold state)
     @FXML private ToggleButton dashboardToggle;
     @FXML private ToggleButton inventoryToggle;
     @FXML private ToggleButton ordersToggle;
     @FXML private ToggleButton analyticsToggle;
     @FXML private ToggleButton settingsToggle;
 
-    // KPI Labels
     @FXML private Label totalInventoryLabel;
     @FXML private Label todaySalesLabel;
     @FXML private Label todayOrdersLabel;
 
-    // Fixed: Using prepareThreshold=0 to bypass Supabase PgBouncer "Prepared Statement already exists" errors
     private static final String DB_URL = "jdbc:postgresql://aws-1-ap-southeast-1.pooler.supabase.com:6543/postgres?sslmode=require&prepareThreshold=0";
     private static final String DB_USER = "postgres.gwjmqejllljupondbzbs";
     private static final String DB_PASS = "Loritastecafe2026";	
@@ -42,7 +39,6 @@ public class DashboardController {
         startClock();
         refreshDashboardStats();
         
-        // Auto-refresh stats every 30 seconds to sync with Mobile POS sales in real-time
         Timeline refreshTimer = new Timeline(new KeyFrame(Duration.seconds(30), e -> refreshDashboardStats()));
         refreshTimer.setCycleCount(Animation.INDEFINITE);
         refreshTimer.play();
@@ -56,19 +52,14 @@ public class DashboardController {
         clock.play();
     }
 
-    /**
-     * Synchronizes Dashboard KPI cards with Supabase in real-time.
-     */
     private void refreshDashboardStats() {
         try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASS)) {
             
-            // 1. Fetch Total Raw Material Inventory
             String invSql = "SELECT SUM(current_stock) FROM raw_materials";
             try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(invSql)) {
                 if (rs.next()) totalInventoryLabel.setText(String.format("%.0f", rs.getDouble(1)));
             }
 
-            // 2. Fetch Today's Revenue and Order Count
             String salesSql = "SELECT SUM(total_amount), COUNT(id) FROM transactions WHERE DATE(order_date) = CURRENT_DATE";
             try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(salesSql)) {
                 if (rs.next()) {
@@ -80,8 +71,6 @@ public class DashboardController {
             System.err.println("Database Sync Error: " + e.getMessage());
         }
     }
-
-    // --- CARD CLICK HANDLERS (With Navbar Sync) ---
 
     @FXML
     private void handleCardInventory() {
@@ -104,7 +93,7 @@ public class DashboardController {
     @FXML
     private void handleCardLogs() {
         if (settingsToggle != null) settingsToggle.setSelected(true); 
-        loadCenterPage("Settings.fxml"); // Maps to your Inventory Logs / Settings view
+        loadCenterPage("AuditLogs.fxml"); 
     }
 
     @FXML
@@ -112,8 +101,6 @@ public class DashboardController {
         System.out.println("Opening Cashier POS...");
         loadCenterPage("POS.fxml"); 
     }
-
-    // --- TOP NAV BAR ACTIONS ---
 
     @FXML 
     public void showDashboard() { 
@@ -124,7 +111,6 @@ public class DashboardController {
                 mainContainer.getScene().setRoot(dashboardRoot);
             }
         } catch (Exception e) { 
-            System.err.println("Error reloading dashboard view: " + e.getMessage());
             e.printStackTrace(); 
         }
     }
@@ -150,7 +136,7 @@ public class DashboardController {
     @FXML 
     public void handleSettings() { 
         if (settingsToggle != null) settingsToggle.setSelected(true);
-        loadCenterPage("InventoryLogs.fxml"); 
+        loadCenterPage("AuditLogs.fxml"); 
     }
     
     @FXML 
@@ -167,7 +153,6 @@ public class DashboardController {
         }
     }
 
-    // --- ROBUST HELPER METHOD FOR INTERNAL VIEWS ---
     private void loadCenterPage(String fxml) {
         try {
             URL url = getClass().getResource(fxml);
@@ -183,7 +168,6 @@ public class DashboardController {
             Parent root = loader.load();
             mainContainer.setCenter(root);
         } catch (Exception e) {
-            System.err.println("Critical Navigation Error loading " + fxml + ": " + e.getMessage());
             e.printStackTrace();
         }
     }
